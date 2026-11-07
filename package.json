@@ -5,7 +5,9 @@
   "main": "serve.js",
   "scripts": {
     "start": "node serve.js",
-    "test": "node tests/test-suite.js"
+    "test": "node tests/test-suite.js",
+    "tunnel:start": "powershell -ExecutionPolicy Bypass -File scripts/start-hybrid-tunnel.ps1",
+    "security:check": "node tests/test-suite.js"
   },
   "keywords": [
     "portfolio",

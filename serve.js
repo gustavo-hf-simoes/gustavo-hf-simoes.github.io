@@ -1,10 +1,7 @@
 /**
- * ============================================================================
  * SERVIDOR EXECUTIVO & API ROUTER — PORTFÓLIO GUSTAVO SIMÕES
- * Node.js Zero-Dependência | Static Files + OmniRoute Proxy (/api/portfolio/chat)
- * ============================================================================
+ * Node.js Zero-Dependência | Blindagem Zero-Trust & OmniRoute Proxy
  */
-
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -14,6 +11,21 @@ const PORT = parseInt(process.env.PORT, 10) || 3001;
 const PUBLIC_DIR = __dirname;
 const OMNIROUTE_URL = process.env.OMNIROUTE_URL || 'http://127.0.0.1:20128/v1/chat/completions';
 const OMNIROUTE_TIMEOUT_MS = 8000;
+const MAX_PAYLOAD_BYTES = 16 * 1024; // 16 KB
+
+const ALLOWED_MODELS = ['cascata-principal', 'rapido-flash', 'gratis-lote'];
+const INJECTION_PATTERNS = [
+  /ignore\s+(all|previous)\s+instructions/i,
+  /system\s+prompt/i,
+  /<script\b/i,
+  /prompt\s+de\s+sistema/i,
+  /desconsidere\s+(as\s+)?instruções/i,
+  /esqueça\s+(as\s+)?instruções/i
+];
+
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 15;
+const ipRequestTimestamps = new Map();
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -83,32 +95,82 @@ function getLocalIp() {
   const nets = os.networkInterfaces();
   for (const name of Object.keys(nets)) {
     for (const net of nets[name]) {
-      if (net.family === 'IPv4' && !net.internal) {
-        return net.address;
-      }
+      if (net.family === 'IPv4' && !net.internal) return net.address;
     }
   }
   return 'localhost';
 }
 
-function setCorsHeaders(res) {
+function applySecurityAndCorsHeaders(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
 }
 
+function getClientIp(req) {
+  const cfIp = req.headers['cf-connecting-ip'];
+  if (cfIp) return cfIp.trim();
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.socket.remoteAddress || '127.0.0.1';
+}
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const list = (ipRequestTimestamps.get(ip) || []).filter(t => now - t < RATE_LIMIT_WINDOW_MS);
+  if (list.length >= RATE_LIMIT_MAX_REQUESTS) {
+    ipRequestTimestamps.set(ip, list);
+    return false;
+  }
+  list.push(now);
+  ipRequestTimestamps.set(ip, list);
+  return true;
+}
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, list] of ipRequestTimestamps.entries()) {
+    const valid = list.filter(t => now - t < RATE_LIMIT_WINDOW_MS);
+    if (!valid.length) ipRequestTimestamps.delete(ip);
+    else ipRequestTimestamps.set(ip, valid);
+  }
+}, 300000).unref();
+
 async function handleChatEndpoint(req, res) {
-  setCorsHeaders(res);
+  applySecurityAndCorsHeaders(res);
+
+  const clientIp = getClientIp(req);
+  if (!checkRateLimit(clientIp)) {
+    res.writeHead(429, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify({
+      success: false,
+      fallback: true,
+      error: 'Limite de requisições excedido. Acionando motor local.'
+    }));
+  }
 
   let body = '';
+  let payloadExceeded = false;
+
   req.on('data', (chunk) => {
     body += chunk;
-    if (body.length > 1024 * 64) {
+    if (body.length > MAX_PAYLOAD_BYTES) {
+      payloadExceeded = true;
       req.destroy();
     }
   });
 
   req.on('end', async () => {
+    if (payloadExceeded) {
+      res.writeHead(413, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: false, error: 'Payload excede 16 KB.' }));
+    }
+
     try {
       const parsed = JSON.parse(body || '{}');
       const userMessage = parsed.message || parsed.prompt || '';
@@ -119,10 +181,18 @@ async function handleChatEndpoint(req, res) {
         return res.end(JSON.stringify({ success: false, error: 'Mensagem vazia ou inválida.' }));
       }
 
-      // Monta mensagens no formato OpenAI ChatCompletions compatível com OmniRoute
-      const messages = [
-        { role: 'system', content: SYSTEM_PROMPT_EXECUTIVO }
-      ];
+      if (INJECTION_PATTERNS.some(p => p.test(userMessage))) {
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({
+          success: true,
+          reply: 'Como Copiloto Executivo Oficial de Gustavo Simões, meu compromisso é responder exclusivamente sobre sua trajetória de mais de 6 anos de engenharia, seus 4 cases reais em produção (Concent Sistemas, DJEN MCP, Rubinot, Calc Coffee e SDD) e disponibilidade para contratação técnica.',
+          model: 'blindagem-anti-injection',
+          fallback: false
+        }));
+      }
+
+      const selectedModel = ALLOWED_MODELS.includes(parsed.model) ? parsed.model : 'cascata-principal';
+      const messages = [{ role: 'system', content: SYSTEM_PROMPT_EXECUTIVO }];
 
       for (const item of clientHistory.slice(-6)) {
         if (item && item.role && item.content) {
@@ -135,7 +205,6 @@ async function handleChatEndpoint(req, res) {
 
       messages.push({ role: 'user', content: userMessage.trim().slice(0, 2000) });
 
-      // Chama o OmniRoute local com timeout seguro
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), OMNIROUTE_TIMEOUT_MS);
 
@@ -147,8 +216,8 @@ async function handleChatEndpoint(req, res) {
             'Authorization': 'Bearer omniroute-local'
           },
           body: JSON.stringify({
-            model: parsed.model || 'cascata-principal',
-            messages: messages,
+            model: selectedModel,
+            messages,
             temperature: 0.3,
             max_tokens: 600
           }),
@@ -157,9 +226,7 @@ async function handleChatEndpoint(req, res) {
 
         clearTimeout(timer);
 
-        if (!response.ok) {
-          throw new Error(`OmniRoute HTTP ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`OmniRoute HTTP ${response.status}`);
 
         const data = await response.json();
         const reply = data?.choices?.[0]?.message?.content;
@@ -169,22 +236,21 @@ async function handleChatEndpoint(req, res) {
           return res.end(JSON.stringify({
             success: true,
             reply: reply.trim(),
-            model: data.model || 'omniroute-pool'
+            model: data.model || selectedModel
           }));
         }
 
-        throw new Error('Formato inesperado na resposta do OmniRoute');
-      } catch (omniErr) {
+        throw new Error('Formato inesperado na resposta');
+      } catch {
         clearTimeout(timer);
-        // Fallback gracioso: sinaliza que o frontend deve usar o motor conversacional local (CopilotChatEngine)
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         return res.end(JSON.stringify({
           success: false,
           fallback: true,
-          notice: 'OmniRoute local offline ou sem resposta; fallback acionado para motor local.'
+          notice: 'OmniRoute local offline; fallback acionado para motor local.'
         }));
       }
-    } catch (parseErr) {
+    } catch {
       res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
       return res.end(JSON.stringify({ success: false, error: 'JSON malformado.' }));
     }
@@ -192,15 +258,43 @@ async function handleChatEndpoint(req, res) {
 }
 
 function serveStaticFile(req, res) {
-  setCorsHeaders(res);
+  applySecurityAndCorsHeaders(res);
 
   let reqPath = decodeURIComponent(req.url.split('?')[0]);
   if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
 
   const safePath = path.normalize(reqPath).replace(/^(\.\.[\/\\])+/, '');
-  const filePath = path.join(PUBLIC_DIR, safePath);
+  const segments = safePath.split(/[\/\\]+/).filter(Boolean);
 
-  // Evita travessia de diretório
+  // 1. Bloqueio Estrito de Dotfiles e travessia
+  if (segments.some(seg => seg.startsWith('.')) || safePath.includes('..')) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    return res.end('403 Acesso Negado');
+  }
+
+  // 2. Bloqueio de arquivos internos e infraestrutura
+  const lowerSegments = segments.map(s => s.toLowerCase());
+  const blockedRoots = ['tests', 'scripts', 'node_modules', '.agents', '.sdd', '.git'];
+  const blockedFiles = ['serve.js', 'package.json', 'package-lock.json', 'readme.md'];
+
+  if (blockedRoots.includes(lowerSegments[0]) || (lowerSegments.length === 1 && blockedFiles.includes(lowerSegments[0]))) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    return res.end('403 Acesso Negado');
+  }
+
+  // 3. Whitelist Estrita de recursos públicos
+  const allowedRootFiles = ['index.html', 'curriculo.html', 'robots.txt', 'favicon.ico'];
+  const allowedDirs = ['css', 'js', 'assets'];
+
+  const isAllowedRoot = lowerSegments.length === 1 && allowedRootFiles.includes(lowerSegments[0]);
+  const isAllowedDir = lowerSegments.length >= 2 && allowedDirs.includes(lowerSegments[0]);
+
+  if (!isAllowedRoot && !isAllowedDir) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    return res.end('403 Acesso Negado');
+  }
+
+  const filePath = path.join(PUBLIC_DIR, safePath);
   if (!filePath.startsWith(PUBLIC_DIR)) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
     return res.end('403 Acesso Negado');
@@ -217,8 +311,7 @@ function serveStaticFile(req, res) {
 
     res.writeHead(200, {
       'Content-Type': contentType,
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'X-Content-Type-Options': 'nosniff'
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
     });
 
     fs.createReadStream(filePath).pipe(res);
@@ -227,12 +320,23 @@ function serveStaticFile(req, res) {
 
 const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') {
-    setCorsHeaders(res);
+    applySecurityAndCorsHeaders(res);
     res.writeHead(204);
     return res.end();
   }
 
   const cleanUrl = req.url.split('?')[0];
+
+  if (cleanUrl === '/api/health' && req.method === 'GET') {
+    applySecurityAndCorsHeaders(res);
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify({
+      status: 'ok',
+      architecture: 'hybrid-zero-trust',
+      service: 'portfolio-gustavo-simoes',
+      timestamp: new Date().toISOString()
+    }));
+  }
 
   if (cleanUrl === '/api/portfolio/chat' && req.method === 'POST') {
     return handleChatEndpoint(req, res);
@@ -244,15 +348,7 @@ const server = http.createServer((req, res) => {
 if (require.main === module) {
   server.listen(PORT, '0.0.0.0', () => {
     const ip = getLocalIp();
-    console.log(`\n======================================================`);
-    console.log(` PORTFÓLIO EXECUTIVO — GUSTAVO HENRIQUE SIMÕES`);
-    console.log(`======================================================`);
-    console.log(` Servidor HTTP Node.js Zero-Dependência ativo!`);
-    console.log(` - Local:      http://localhost:${PORT}/`);
-    console.log(` - Currículo:  http://localhost:${PORT}/curriculo.html`);
-    console.log(` - Rede Local: http://${ip}:${PORT}/`);
-    console.log(` - Chat API:   POST http://localhost:${PORT}/api/portfolio/chat`);
-    console.log(`======================================================\n`);
+    console.log(`Portfólio Executivo ativo: http://localhost:${PORT}/ (Rede: http://${ip}:${PORT}/)`);
   });
 }
 

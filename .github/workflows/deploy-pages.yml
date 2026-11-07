@@ -1,0 +1,55 @@
+name: Deploy Seguro GitHub Pages (SDD Black-Box)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Isolar Artefato Público (Segurança SDD Black-Box)
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp curriculo.html _site/
+          cp -r css _site/
+          cp -r js _site/
+          cp -r assets _site/
+          echo "=== Verificação de Segurança de Arquivos Públicos ==="
+          ls -la _site
+          # Garante que artefatos confidenciais e infraestrutura de governança NUNCA vazem no Pages
+          if [ -d "_site/.sdd" ] || [ -d "_site/.agents" ] || [ -f "_site/serve.js" ]; then
+            echo "ERRO CRÍTICO: Arquivo confidencial detectado no artefato público!"
+            exit 1
+          fi
+
+      - name: Upload Artefato
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+      - name: Deploy no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

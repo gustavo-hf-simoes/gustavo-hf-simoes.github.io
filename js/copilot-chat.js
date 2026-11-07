@@ -13,9 +13,59 @@ class CopilotChatEngine {
   constructor(options = {}) {
     this.history = options.history || [];
     this.primaryApiUrl = options.primaryApiUrl || "/api/portfolio/chat";
-    this.secondaryApiUrl = options.secondaryApiUrl || "http://127.0.0.1:20129/api/portfolio/chat";
-    this.timeoutMs = options.timeoutMs || 6500;
+    this.timeoutMs = options.timeoutMs || 5000;
     this.data = options.data || (typeof window !== "undefined" && window.PORTFOLIO_DATA) || null;
+    this.discoveredApiUrl = null;
+  }
+
+  /**
+   * Descoberta Automática de Endpoint Híbrido (Localhost vs. Nuvem Estática + Túnel)
+   * @returns {Promise<string|null>}
+   */
+  async resolveApiEndpoint() {
+    if (this.discoveredApiUrl !== null) {
+      return this.discoveredApiUrl;
+    }
+
+    if (typeof window === "undefined" || !window.location) {
+      this.discoveredApiUrl = this.primaryApiUrl;
+      return this.discoveredApiUrl;
+    }
+
+    const host = window.location.hostname;
+    const isLocal = host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
+
+    // 1. Em ambiente local, utiliza diretamente o endpoint relativo do servidor
+    if (isLocal) {
+      this.discoveredApiUrl = this.primaryApiUrl;
+      return this.discoveredApiUrl;
+    }
+
+    // 2. Em domínio estático público (GitHub Pages, Cloudflare Pages), lê assets/tunnel-config.json
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2500);
+
+      const res = await fetch(`assets/tunnel-config.json?_t=${Date.now()}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+
+      if (res.ok) {
+        const config = await res.json();
+        const base = (config && typeof config.tunnelBaseUrl === "string") ? config.tunnelBaseUrl.trim() : "";
+        if (base && (base.startsWith("http://") || base.startsWith("https://"))) {
+          this.discoveredApiUrl = `${base.replace(/\/+$/, "")}/api/portfolio/chat`;
+          return this.discoveredApiUrl;
+        }
+      }
+    } catch {
+      // Ignora falhas de leitura do config de túnel
+    }
+
+    // Se túnel não estiver configurado ou PC estiver desligado, aciona motor local sem erro
+    this.discoveredApiUrl = "";
+    return null;
   }
 
   /**
@@ -80,49 +130,49 @@ class CopilotChatEngine {
   }
 
   /**
-   * Tenta fazer requisição para os endpoints da API com timeout controlado
+   * Tenta fazer requisição para a API Híbrida com timeout controlado de 5s
    * @param {string} prompt 
    * @returns {Promise<{reply: string, model?: string} | null>}
    */
   async tryFetchLlm(prompt) {
     if (typeof fetch === "undefined") return null;
 
-    const urls = [this.primaryApiUrl, this.secondaryApiUrl];
+    const endpoint = await this.resolveApiEndpoint();
+    if (!endpoint) return null;
+
     const payload = JSON.stringify({
       message: prompt,
       history: this.history.slice(-8)
     });
 
-    for (const url of urls) {
-      if (!url) continue;
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), this.timeoutMs);
 
-        const res = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: payload,
-          signal: controller.signal
-        });
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: payload,
+        signal: controller.signal
+      });
 
-        clearTimeout(timer);
+      clearTimeout(timer);
 
-        if (res.ok) {
-          const data = await res.json();
-          if (data && (data.reply || (data.success && data.reply))) {
-            return {
-              reply: data.reply,
-              model: data.model || "LLM Server"
-            };
-          }
+      if (res.ok) {
+        const data = await res.json();
+        if (data && (data.reply || (data.success && data.reply))) {
+          return {
+            reply: data.reply,
+            model: data.model || "LLM Server (Híbrido 24/7)"
+          };
         }
-      } catch {
-        // Tenta próxima URL
       }
+    } catch {
+      // Falha suave de rede / timeout / CORS: reavalia futuramente
+      this.discoveredApiUrl = null;
     }
 
     return null;
