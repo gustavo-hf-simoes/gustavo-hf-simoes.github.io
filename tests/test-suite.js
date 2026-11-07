@@ -256,6 +256,21 @@ it("package.json deve ter scripts 'start' e 'test' configurados", () => {
 });
 
 // ---------------------------------------------------------------------------
+// 7. AUDITORIA SECOPS & BLINDAGEM DE SEGURANÇA
+// ---------------------------------------------------------------------------
+console.log("\n7. Auditoria SecOps & Blindagem de Segurança (.sdd/04_security):");
+
+it("SECURITY_REPORT.md deve existir e certificar conformidade SecOps", () => {
+  const secPath = path.join(ROOT_DIR, ".sdd", "04_security", "SECURITY_REPORT.md");
+  assert.ok(fs.existsSync(secPath), "SECURITY_REPORT.md ausente em .sdd/04_security/");
+  const content = fs.readFileSync(secPath, "utf-8");
+  assert.ok(content.length > 200, "SECURITY_REPORT.md muito curto");
+  assert.ok(content.includes("100/100") || content.includes("APROVADO"), "Score de segurança deve ser aprovado");
+  assert.ok(content.includes("Prompt Injection"), "Deve auditar blindagem de IA e Prompt Injection");
+  assert.ok(content.includes("SQL"), "Deve auditar prevenção de SQL Injection");
+});
+
+// ---------------------------------------------------------------------------
 // RESUMO FINAL DOS TESTES
 // ---------------------------------------------------------------------------
 console.log("\n=======================================================");
