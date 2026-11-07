@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currículo ATS & Executivo — Gustavo Henrique Ferreira Simões | Full Stack & IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/curriculo.css" />
+</head>
+<body>
+
+  <!-- Barra de Controle em Tela (Oculta na Impressão / PDF) -->
+  <div class="top-action-bar no-print">
+    <div class="bar-left">
+      <a href="index.html" class="action-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Voltar ao Portfólio</span>
+      </a>
+
+      <span class="ats-score-pill" title="Estrutura linear de coluna única testada para leitura 100% limpa em Gupy, Greenhouse, Workday e Lever">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>ATS Ready: Coluna Única Linear (Gupy / Greenhouse / Workday)</span>
+      </span>
+
+      <div class="mode-switch-group" role="group" aria-label="Alternar foto no currículo">
+        <button type="button" id="btnModeAts" class="mode-btn active" onclick="setResumeMode(false)">
+          Modo ATS Puro (Sem Foto)
+        </button>
+        <button type="button" id="btnModePhoto" class="mode-btn" onclick="setResumeMode(true)">
+          Modo Executivo (Com Foto)
+        </button>
+      </div>
+    </div>
+
+    <div class="bar-actions">
+      <a href="https://wa.me/5543996034632?text=Ol%C3%A1%20Gustavo!%20Analisei%20seu%20curr%C3%ADculo%20A4%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" class="action-btn whatsapp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <span>WhatsApp</span>
+      </a>
+      <button type="button" onclick="window.print()" class="action-btn primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span>Imprimir / Salvar PDF (A4)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       DOCUMENTO A4 LINEAR (100% COMPATÍVEL COM ROBÔS ATS E LEITURA HUMANA)
+       ======================================================================== -->
+  <article class="a4-page" aria-label="Currículo Profissional de Gustavo Henrique Ferreira Simões">
+
+    <!-- 1. CABEÇALHO DE IDENTIFICAÇÃO E CONTATO -->
+    <header class="cv-header">
+      <div class="cv-header-main">
+        <h1 class="cv-name">Gustavo Henrique Ferreira Simões</h1>
+        <p class="cv-headline">Desenvolvedor Full Stack | Especialista em Automação, Agentes de IA &amp; Integração de Sistemas (PSM I)</p>
+        <div class="cv-contact-line">
+          <span><strong>Localização:</strong> Londrina, PR (Disponível para Remoto, Híbrido ou Presencial)</span>
+          <span class="cv-contact-sep">|</span>
+          <span><strong>Telefone / WhatsApp:</strong> <a href="https://wa.me/5543996034632">+55 (43) 99603-4632</a></span>
+          <span class="cv-contact-sep">|</span>
+          <span><strong>E-mail:</strong> <a href="mailto:gustavo.hf.simoes@gmail.com">gustavo.hf.simoes@gmail.com</a></span>
+          <span class="cv-contact-sep">|</span>
+          <span><strong>GitHub:</strong> <a href="https://github.com/gustavo-hf-simoes">github.com/gustavo-hf-simoes</a></span>
+        </div>
+      </div>
+
+      <div class="cv-portrait-box">
+        <img src="assets/foto_perfil.png" alt="Gustavo Henrique Ferreira Simões" />
+      </div>
+    </header>
+
+    <!-- 2. RESUMO PROFISSIONAL (ALTA DENSIDADE DE PALAVRAS-CHAVE ATS) -->
+    <section class="cv-section">
+      <h2 class="cv-section-title">Resumo Profissional</h2>
+      <p class="cv-summary">
+        <strong>Desenvolvedor Full Stack e Especialista em Automação e Inteligência Artificial</strong> com <strong>mais de 6 anos de experiência prática</strong> no ciclo completo de engenharia de software para ambientes de missão crítica. Sólido domínio em <strong>C# (.NET Core), Python, TypeScript, JavaScript (Node.js), Angular, React e SQL (PostgreSQL, SQL Server, MySQL)</strong>. Experiência comprovada no desenvolvimento de integrações hospitalares/laboratoriais de baixo nível (<strong>LIS/HIS, TCP/IP, RS-232</strong>) e na arquitetura de <strong>Agentes de IA, fluxos autônomos em n8n, servidores Model Context Protocol (MCP) e WhatsApp Business API</strong>. Certificado internacionalmente como <strong>Professional Scrum Master™ I (PSM I — Scrum.org)</strong>, unindo liderança técnica, especificação rigorosa de requisitos e foco em redução de custos operacionais.
+      </p>
+    </section>
+
+    <!-- 3. COMPETÊNCIAS TÉCNICAS (HARD SKILLS EM FORMATO TEXTUAL LINEAR) -->
+    <section class="cv-section">
+      <h2 class="cv-section-title">Competências Técnicas (Hard Skills)</h2>
+      <div class="skills-linear-list">
+        <div class="skill-row">
+          <strong>Linguagens, Backend &amp; APIs:</strong> C#, .NET Core, Python 3, TypeScript, JavaScript (ES6+), Node.js, APIs RESTful, Webhooks, JSON, TCP/IP, RS-232.
+        </div>
+        <div class="skill-row">
+          <strong>Frontend &amp; Aplicações Web:</strong> Angular, React, HTML5 Semântico, CSS3 Moderno, Progressive Web Apps (PWA Offline-First), Service Workers, Chart.js, SPA.
+        </div>
+        <div class="skill-row">
+          <strong>Inteligência Artificial &amp; Hiperautomação:</strong> Agentes de IA Autônomos, Orquestração n8n, Model Context Protocol (MCP), Integração de APIs de LLMs (OpenAI, Gemini, Claude), Engenharia de Prompt, RAG, WhatsApp Business API.
+        </div>
+        <div class="skill-row">
+          <strong>Bancos de Dados, Cloud &amp; DevOps:</strong> PostgreSQL, Microsoft SQL Server, MySQL, SQLite, Supabase, Firebase, Amazon Web Services (AWS Cloud), Git, GitHub, Linux.
+        </div>
+        <div class="skill-row">
+          <strong>Engenharia de Software, Qualidade &amp; Agilidade:</strong> Scrum (Certified PSM I), Kanban, Spec-Driven Development (PRD, SPEC, BDD), Testes Automatizados E2E, Gestão de Projetos, Suporte N1/N2/N3.
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. EXPERIÊNCIA PROFISSIONAL (MÉTODO STAR/XYZ) -->
+    <section class="cv-section">
+      <h2 class="cv-section-title">Experiência Profissional</h2>
+
+      <div class="exp-item">
+        <div class="exp-header">
+          <div>
+            <span class="exp-role">Desenvolvedor Full Stack &amp; Especialista em Automação e IA</span> —
+            <span class="exp-company">Autônomo / Consultoria de Tecnologia (Londrina, PR)</span>
+          </div>
+          <span class="exp-date">Jun 2025 – Presente</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Projetou e implementou arquiteturas de <strong>Agentes de IA</strong>, fluxos de hiperautomação em <strong>n8n</strong> e servidores <strong>Model Context Protocol (MCP)</strong>, reduzindo em até <strong>90% o tempo operacional</strong> de triagem, atendimento e geração documental em clientes.</li>
+          <li>Desenvolveu sistemas Full Stack ponta a ponta utilizando <strong>Angular, React, TypeScript e Python</strong> integrados a bancos relacionais e BaaS (<strong>PostgreSQL, Supabase e Firebase</strong>) via APIs REST e Webhooks.</li>
+          <li>Construiu plataformas verticais para o setor Jurídico e Financeiro, incluindo monitoramento automatizado do Diário de Justiça Eletrônico Nacional (<strong>DJEN</strong>), automação de atendimento via <strong>WhatsApp Business API</strong> com emissão de kits PDF e motores matemáticos de Revisão de Contrato Veicular.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-header">
+          <div>
+            <span class="exp-role">Analista de Desenvolvimento de Sistemas</span> —
+            <span class="exp-company">Concent Sistemas (Londrina, PR)</span>
+          </div>
+          <span class="exp-date">Jan 2019 – Mai 2025 (6 anos e 5 meses)</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Desenvolveu, manteve e escalou sistemas de automação laboratorial de missão crítica, realizando o interfaceamento bidirecional de equipamentos médicos com sistemas <strong>LIS e HIS</strong> via protocolos <strong>TCP/IP e comunicação serial RS-232</strong>.</li>
+          <li>Atuou no desenvolvimento Full Stack de módulos corporativos utilizando <strong>C# (.NET Core)</strong> no backend, <strong>Angular</strong> no frontend e modelagem/otimização de queries complexas em <strong>SQL Server, PostgreSQL e MySQL</strong>.</li>
+          <li>Liderou projetos técnicos e cerimônias ágeis (<strong>Scrum</strong>), conduzindo levantamento de requisitos junto a stakeholders, coordenação de entregas da equipe, implantação em produção e suporte especializado N1 e N2.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. PROJETOS TÉCNICOS EM DESTAQUE (CASES VERIFICÁVEIS) -->
+    <section class="cv-section">
+      <h2 class="cv-section-title">Projetos em Destaque (Engenharia de IA &amp; Full Stack)</h2>
+      <div class="proj-list">
+        <div class="proj-item">
+          <div class="proj-item-head">
+            <span class="proj-title">1. DJEN LegalTech — Automação Jurídica &amp; Atendimento via Servidor MCP</span>
+            <span class="proj-stack">Node.js • TypeScript • MCP • WhatsApp API • PostgreSQL</span>
+          </div>
+          <p>Sistema jurídico integrado ao DJEN e servidor MCP customizado que automatiza a qualificação de clientes via WhatsApp, organiza pastas estruturadas de documentos, executa cálculos de revisão veicular e gera kits de procuração em PDF prontos para assinatura (-90% no tempo de atendimento).</p>
+        </div>
+
+        <div class="proj-item">
+          <div class="proj-item-head">
+            <span class="proj-title">2. Rubinot Companion — Motor de Telemetria, Derivação Matemática Cúbica &amp; Analytics</span>
+            <span class="proj-stack">Python 3 • Modelagem Matemática • ThreadingHTTPServer • Chart.js</span>
+          </div>
+          <p>Plataforma analítica local-first que ingere 4 fontes de telemetria JSON, aplica equação polinomial cúbica de XP para projeção de nível, separa matematicamente cura em aliados de auto-cura (Sio Split), exporta schema CSV/JSON (+22 colunas) e valida resultados com suíte de testes E2E em 4 camadas.</p>
+        </div>
+
+        <div class="proj-item">
+          <div class="proj-item-head">
+            <span class="proj-title">3. Calc Coffee — Aplicação PWA Offline-First &amp; Copiloto Sensorial (Padrão SCA)</span>
+            <span class="proj-stack">JavaScript ES6+ • PWA • Service Workers • CSS3 • LocalStorage</span>
+          </div>
+          <p>Aplicação Web Progressiva instalável com operação 100% offline, motor de cálculo reativo (&lt;15ms) para proporções de extração e módulo de diagnóstico sensorial baseado na Roda de Sabores da Specialty Coffee Association (SCA).</p>
+        </div>
+
+        <div class="proj-item">
+          <div class="proj-item-head">
+            <span class="proj-title">4. Arquitetura de Orquestração Multi-Agente &amp; Governança Spec-Driven (SDD)</span>
+            <span class="proj-stack">Arquitetura de IA • FinOps de LLMs • Automação de QA</span>
+          </div>
+          <p>Esteira de engenharia de software orientada a especificações em 4 estágios (PRD, Arquitetura API-First, Desenvolvimento e Auditoria QA) com 2 checkpoints humanos e roteamento inteligente de modelos que reduz em até 85% o custo operacional de tokens.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. FORMAÇÃO ACADÊMICA & CERTIFICAÇÕES -->
+    <section class="cv-section" style="margin-bottom: 0;">
+      <h2 class="cv-section-title">Formação Acadêmica &amp; Certificações Internacionais</h2>
+      <div class="edu-list">
+        <div class="edu-item">
+          <div class="edu-line">
+            <span class="edu-degree">Graduação Tecnológica em Análise e Desenvolvimento de Sistemas — Faculdade Estácio de Sá (Londrina, PR)</span>
+            <span class="exp-date">Set 2026 – Dez 2028 (Cursando)</span>
+          </div>
+          <p class="edu-details">Destaques Curriculares (Matriz 2026): Computação em Nuvem com Amazon AWS, Inteligência Artificial para Devs, Aplicações de Cloud, IoT e Indústria 4.0 em Python, Engenharia de Software, Redes e Segurança da Informação.</p>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-line">
+            <span class="edu-degree">Certificação Internacional: Professional Scrum Master™ I (PSM I) — Scrum.org</span>
+            <span class="exp-date">Emitida em Maio 2024</span>
+          </div>
+          <p class="edu-details">Credencial vitalícia internacional que comprova domínio avançado de práticas ágeis, gestão de backlog, métricas de fluxo e liderança de equipes técnicas.</p>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-line">
+            <span class="edu-degree">Bacharelado em Biomedicina — Centro Universitário Filadélfia (UniFil, Londrina, PR)</span>
+            <span class="exp-date">Jan 2017 – Dez 2021 (Concluído)</span>
+          </div>
+          <p class="edu-details">Base analítica e científica aplicada a controle de qualidade, estatística e fluxos operacionais de sistemas laboratoriais e hospitalares (LIS/HIS).</p>
+        </div>
+      </div>
+    </section>
+
+  </article>
+
+  <script src="js/resume-ats.js"></script>
+</body>
+</html>

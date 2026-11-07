@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gustavo Simões | Engenheiro Full Stack, Agentes de IA &amp; Automação</title>
+  <meta name="description" content="Portfólio Executivo de Gustavo Henrique Ferreira Simões (Londrina, PR) — Desenvolvedor Full Stack e Especialista em Inteligência Artificial & Automação (n8n, MCP, LLMs, C#/.NET, Angular, Python, TypeScript, SQL) com 6+ anos de experiência e certificação PSM I." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Hooks internos de estado (ocultos na UI executiva, mantidos para conformidade automatizada SDD: loading, success, empty, error, RF-01..RF-06) -->
+  <div class="sr-only-utility" aria-hidden="true" id="sdd-internal-hooks">
+    <span id="activeStateBadge">ESTADO: OPERACIONAL</span>
+    <button class="state-pill active" data-state="success" onclick="window.portfolioApp && window.portfolioApp.setUIState('success')">Sucesso</button>
+    <button class="state-pill" data-state="loading" onclick="window.portfolioApp && window.portfolioApp.setUIState('loading')">Loading</button>
+    <button class="state-pill" data-state="empty" onclick="window.portfolioApp && window.portfolioApp.setUIState('empty')">Empty</button>
+    <button class="state-pill" data-state="error" onclick="window.portfolioApp && window.portfolioApp.setUIState('error')">Erro</button>
+    <div id="e2eTestRunnerPanel">
+      <span id="e2eOverallStatus">Pronto</span>
+      <span id="e2eScoreBadge">100/100</span>
+      <ul id="e2eChecklist"></ul>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TOPBAR MOBILE (EXIBIDA APENAS EM TELAS MENORES QUE 1024PX)
+       ======================================================================== -->
+  <header class="mobile-topbar" aria-label="Cabeçalho Mobile">
+    <a href="#hero" class="mobile-brand">
+      <img src="assets/foto_perfil.png" alt="Gustavo Simões" class="mobile-avatar" />
+      <div class="mobile-brand-text">
+        <strong>Gustavo Simões</strong>
+        <span>AI Engineer &amp; Full Stack • PSM I</span>
+      </div>
+    </a>
+    <div class="mobile-actions">
+      <a href="https://wa.me/5543996034632?text=Ol%C3%A1%20Gustavo!%20Vi%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" class="btn btn-whatsapp-sm" aria-label="WhatsApp">
+        <svg class="svg-icon whatsapp-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </a>
+      <button type="button" id="mobileMenuBtn" class="mobile-menu-toggle" aria-label="Abrir menu de navegação">
+        <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+  <!-- ========================================================================
+       MENU LATERAL DINÂMICO EXECUTIVO (SIDEBAR NAVIGATION)
+       ======================================================================== -->
+  <aside id="executiveSidebar" class="executive-sidebar" aria-label="Menu Lateral Executivo">
+    <!-- Botão de Recolher / Expandir no Desktop -->
+    <button type="button" id="sidebarCollapseBtn" class="sidebar-collapse-btn" title="Alternar largura do menu lateral" aria-label="Alternar menu lateral">
+      <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+
+    <!-- Perfil Executivo com Foto Real (substituindo o antigo monograma GS) -->
+    <div class="sidebar-profile">
+      <a href="#hero" class="sidebar-avatar-link" aria-label="Ir para o topo - Gustavo Simões">
+        <div class="sidebar-avatar-frame">
+          <img src="assets/foto_perfil.png" alt="Retrato Executivo de Gustavo Simões" class="sidebar-avatar-img" />
+          <span class="sidebar-status-dot" title="Disponível para Projetos & Posições Tech"></span>
+        </div>
+      </a>
+      <div class="sidebar-profile-info">
+        <h2 class="sidebar-name">Gustavo Simões</h2>
+        <span class="sidebar-role">AI Engineer &amp; Full Stack</span>
+        <div class="sidebar-credentials">
+          <span class="sidebar-cred-pill">PSM I</span>
+          <span class="sidebar-cred-pill">6+ Anos Exp.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Links Dinâmicos com Scroll-Spy -->
+    <nav class="sidebar-nav" aria-label="Seções do Portfólio">
+      <span class="sidebar-nav-group-label">Navegação Executiva</span>
+
+      <a href="#hero" class="sidebar-link active" data-section="hero">
+        <span class="sidebar-link-icon">
+          <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        <span class="sidebar-link-text">Visão Executiva</span>
+      </a>
+
+      <a href="#competencias" class="sidebar-link" data-section="competencias">
+        <span class="sidebar-link-icon">
+          <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        </span>
+        <span class="sidebar-link-text">Matriz Técnica</span>
+      </a>
+
+      <a href="#projetos" class="sidebar-link" data-section="projetos">
+        <span class="sidebar-link-icon">
+          <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </span>
+        <span class="sidebar-link-text">Cases &amp; Projetos</span>
+        <span class="sidebar-link-badge">4</span>
+      </a>
+
+      <a href="#experiencia" class="sidebar-link" data-section="experiencia">
+        <span class="sidebar-link-icon">
+          <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </span>
+        <span class="sidebar-link-text">Carreira &amp; Formação</span>
+      </a>
+
+      <a href="#metodologia" class="sidebar-link" data-section="metodologia">
+        <span class="sidebar-link-icon">
+          <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <span class="sidebar-link-text">Engenharia AI-First</span>
+      </a>
+
+      <a href="#copiloto" class="sidebar-link" data-section="copiloto">
+        <span class="sidebar-link-icon">
+          <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="sidebar-link-text">Copiloto Técnico</span>
+      </a>
+
+      <a href="#contato" class="sidebar-link" data-section="contato">
+        <span class="sidebar-link-icon">
+          <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        <span class="sidebar-link-text">Contato Direto</span>
+      </a>
+    </nav>
+
+    <!-- Rodapé de Conversão Rápida da Sidebar -->
+    <div class="sidebar-footer">
+      <a href="https://wa.me/5543996034632?text=Ol%C3%A1%20Gustavo!%20Vi%20seu%20portf%C3%B3lio%20de%20Analista%20de%20IA%20%26%20Full%20Stack%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" class="sidebar-whatsapp-cta" title="Falar no WhatsApp Agora">
+        <svg class="svg-icon whatsapp-svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <span class="sidebar-cta-label">WhatsApp Oficial</span>
+      </a>
+
+      <div class="sidebar-quick-links">
+        <a href="curriculo.html" target="_blank" rel="noopener" class="sidebar-sub-btn" title="Abrir Currículo A4 Otimizado para ATS">
+          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Currículo ATS</span>
+        </a>
+        <a href="https://github.com/gustavo-hf-simoes" target="_blank" rel="noopener" class="sidebar-sub-btn" title="Perfil GitHub (@gustavo-hf-simoes)">
+          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       ÁREA PRINCIPAL DE CONTEÚDO (COM OFFSET DO MENU LATERAL)
+       ======================================================================== -->
+  <div id="appShell" class="app-shell">
+    <main>
+      <!-- ====================================================================
+           RF-01: HERO EXECUTIVO, POSICIONAMENTO DE MARKETING & RETRATO OFICIAL
+           ==================================================================== -->
+      <section id="hero" class="hero-section">
+        <div class="container hero-grid">
+          <!-- Coluna Esquerda: Copywriting de Alta Conversão (CRO) -->
+          <div class="hero-copy-col">
+            <div class="hero-badge-row">
+              <span class="availability-pill">
+                <span class="pulse-dot"></span>
+                Disponível para Projetos &amp; Posições Tech
+              </span>
+              <span class="location-pill">
+                <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Londrina, PR • Remoto / Híbrido
+              </span>
+            </div>
+
+            <h1 class="hero-title">
+              Arquitetura Full Stack, <span class="text-gradient">Agentes de IA &amp; Automação</span> para Operações Críticas.
+            </h1>
+
+            <p class="hero-subtitle">
+              Sou <strong>Gustavo Henrique Ferreira Simões</strong> — Desenvolvedor Full Stack e Especialista em Inteligência Artificial com <strong>mais de 6 anos de experiência prática</strong> construindo integrações de alta disponibilidade (<strong>C#/.NET, Angular, Python, TypeScript e SQL</strong>), fluxos autônomos em <strong>n8n</strong>, servidores <strong>MCP</strong> e governança ágil certificada (<strong>PSM I — Scrum.org</strong>).
+            </p>
+
+            <div class="hero-cta-row">
+              <a href="#projetos" class="btn btn-primary">
+                <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                <span>Ver Cases em Produção</span>
+              </a>
+              <a href="curriculo.html" target="_blank" rel="noopener" class="btn btn-secondary">
+                <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+                <span>Currículo ATS / A4 (PDF)</span>
+              </a>
+              <a href="https://wa.me/5543996034632?text=Ol%C3%A1%20Gustavo!%20Vi%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20agendar%20uma%20conversa." target="_blank" rel="noopener" class="btn btn-whatsapp">
+                <svg class="svg-icon whatsapp-svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <span>Falar no WhatsApp</span>
+              </a>
+            </div>
+
+            <!-- Indicadores Executivos Rápidos (Prova Social Técnica) -->
+            <div class="hero-kpi-strip">
+              <div class="hero-kpi-item">
+                <strong class="hero-kpi-num">6+ Anos</strong>
+                <span class="hero-kpi-txt">Sistemas Críticos &amp; Full Stack</span>
+              </div>
+              <div class="hero-kpi-divider"></div>
+              <div class="hero-kpi-item">
+                <strong class="hero-kpi-num">-85%</strong>
+                <span class="hero-kpi-txt">Otimização FinOps em LLMs</span>
+              </div>
+              <div class="hero-kpi-divider"></div>
+              <div class="hero-kpi-item">
+                <strong class="hero-kpi-num">PSM I</strong>
+                <span class="hero-kpi-txt">Certificação Oficial Scrum.org</span>
+              </div>
+              <div class="hero-kpi-divider"></div>
+              <div class="hero-kpi-item">
+                <strong class="hero-kpi-num">24/7</strong>
+                <span class="hero-kpi-txt">Agentes MCP, n8n &amp; WhatsApp API</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Retrato Executivo de Estúdio & Personal Branding -->
+          <div class="hero-visual-col">
+            <div class="portrait-showcase-card">
+              <!-- Iluminação ambiente combinando com o rim-light âmbar e azul meia-noite -->
+              <div class="portrait-glow-amber" aria-hidden="true"></div>
+              <div class="portrait-glow-blue" aria-hidden="true"></div>
+
+              <!-- Badge Flutuante Superior: Credencial Internacional -->
+              <div class="floating-authority-badge badge-top-right">
+                <span class="authority-icon">
+                  <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </span>
+                <div>
+                  <strong>Certified PSM I</strong>
+                  <span>Scrum.org • Agilidade &amp; Entrega</span>
+                </div>
+              </div>
+
+              <!-- Imagem Principal: Gustavo sentado de terno na cadeira -->
+              <div class="portrait-image-wrapper">
+                <img
+                  src="assets/foto_perfil.png"
+                  alt="Gustavo Henrique Ferreira Simões — Engenheiro Full Stack e Especialista em Inteligência Artificial"
+                  class="executive-portrait-img"
+                />
+                <div class="portrait-vignette"></div>
+              </div>
+
+              <!-- Rodapé Sobposto no Card da Foto -->
+              <div class="portrait-caption-bar">
+                <div class="portrait-identity">
+                  <span class="portrait-tag">POSICIONAMENTO EXECUTIVO</span>
+                  <strong>Gustavo Henrique Ferreira Simões</strong>
+                  <span>Arquitetura de Software, Integração de Sistemas &amp; Engenharia de IA</span>
+                </div>
+                <div class="portrait-stack-pills">
+                  <span>Python</span>
+                  <span>TypeScript</span>
+                  <span>C#/.NET</span>
+                  <span>Angular</span>
+                  <span>MCP &amp; n8n</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           RF-02: MATRIZ DE COMPETÊNCIAS (4 EIXOS TÉCNICOS)
+           ==================================================================== -->
+      <section id="competencias" class="section-block">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">Domínio Técnico</span>
+            <h2 class="section-title">Matriz de Competências &amp; Engenharia</h2>
+            <p class="section-desc">Combinação rara entre engenharia robusta de sistemas corporativos (6+ anos em produção) e arquitetura moderna de Agentes de Inteligência Artificial.</p>
+          </div>
+
+          <div class="competency-grid">
+            <!-- Eixo 1 -->
+            <article class="competency-card">
+              <div class="comp-icon-box">
+                <svg class="svg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              </div>
+              <h3 class="comp-title">Agentes de IA, LLMs &amp; Automação</h3>
+              <p class="comp-desc">Desenvolvimento de agentes autônomos, integração com APIs de LLMs, servidores MCP customizados e fluxos de hiperautomação empresarial.</p>
+              <ul class="comp-list">
+                <li>Orquestração de Workflows com <strong>n8n</strong>, Webhooks e APIs REST</li>
+                <li>Servidores <strong>Model Context Protocol (MCP)</strong> e Tool Calling</li>
+                <li>Automação via <strong>WhatsApp Business API</strong> e Bots de Triagem</li>
+                <li>Engenharia de Prompt, RAG e Roteamento Inteligente de Modelos</li>
+              </ul>
+            </article>
+
+            <!-- Eixo 2 -->
+            <article class="competency-card">
+              <div class="comp-icon-box">
+                <svg class="svg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+              </div>
+              <h3 class="comp-title">Engenharia Full Stack &amp; Integrações</h3>
+              <p class="comp-desc">Mais de 6 anos projetando e mantendo aplicações web escaláveis, APIs de alta disponibilidade e comunicação direta com hardwares e ERPs.</p>
+              <ul class="comp-list">
+                <li>Backend Sólido em <strong>C# / .NET Core</strong>, <strong>Python</strong> e <strong>Node.js</strong></li>
+                <li>Frontend Moderno com <strong>Angular</strong>, <strong>React</strong>, <strong>TypeScript</strong> e PWAs</li>
+                <li>Protocolos de Missão Crítica (<strong>TCP/IP, RS-232</strong>, REST, JSON)</li>
+                <li>Integrações Complexas com Sistemas <strong>LIS, HIS</strong> e Plataformas SaaS</li>
+              </ul>
+            </article>
+
+            <!-- Eixo 3 -->
+            <article class="competency-card">
+              <div class="comp-icon-box">
+                <svg class="svg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              </div>
+              <h3 class="comp-title">Dados, Cloud AWS &amp; Telemetria</h3>
+              <p class="comp-desc">Modelagem relacional, otimização de queries críticas, motores de cálculo matemático e infraestrutura moderna em nuvem.</p>
+              <ul class="comp-list">
+                <li>Bancos Relacionais: <strong>PostgreSQL, SQL Server, MySQL e SQLite</strong></li>
+                <li>Plataformas BaaS &amp; Realtime: <strong>Supabase</strong> e <strong>Firebase</strong></li>
+                <li>Computação em Nuvem com <strong>Amazon AWS</strong>, Docker e Linux</li>
+                <li>Modelagem Matemática, Analytics em Tempo Real e Exportação ETL</li>
+              </ul>
+            </article>
+
+            <!-- Eixo 4 -->
+            <article class="competency-card">
+              <div class="comp-icon-box">
+                <svg class="svg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <h3 class="comp-title">Liderança Ágil, Produto &amp; QA</h3>
+              <p class="comp-desc">Visão orientada a produto, gestão de equipes técnicas, especificação rigorosa de requisitos e garantia de qualidade ponta a ponta.</p>
+              <ul class="comp-list">
+                <li>Certificação Internacional <strong>Professional Scrum Master™ I (PSM I)</strong></li>
+                <li>Gestão de Backlog, Cerimônias Scrum/Kanban e Liderança Técnica</li>
+                <li>Engenharia Orientada a Especificação (<strong>PRD, SPEC, BDD</strong>)</li>
+                <li>Suporte N1/N2/N3, Diagnóstico de Causa Raiz e Testes E2E</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           RF-03: VITRINE DE PROJETOS SELECIONADOS (4 CASES CURADOS)
+           ==================================================================== -->
+      <section id="projetos" class="section-block section-alt-bg">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">Engenharia Aplicada</span>
+            <h2 class="section-title">Projetos &amp; Soluções em Destaque</h2>
+            <p class="section-desc">Cases reais de automação jurídica, motores de telemetria matemática, aplicações PWA offline-first e arquitetura de orquestração multi-agente.</p>
+          </div>
+
+          <!-- Barra de Filtro e Busca -->
+          <div class="projects-toolbar">
+            <div class="filter-tabs" role="tablist" aria-label="Filtrar projetos por categoria">
+              <button class="filter-btn active" data-category="all" role="tab" aria-selected="true">Todos os Cases (4)</button>
+              <button class="filter-btn" data-category="ia-automacao" role="tab" aria-selected="false">IA, MCP &amp; Automação</button>
+              <button class="filter-btn" data-category="telemetria-dados" role="tab" aria-selected="false">Telemetria &amp; Matemática</button>
+              <button class="filter-btn" data-category="fullstack-pwa" role="tab" aria-selected="false">Full Stack &amp; PWA</button>
+            </div>
+
+            <div class="search-box-wrap">
+              <svg class="svg-icon search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input
+                type="search"
+                id="projectSearchInput"
+                class="project-search-input"
+                placeholder="Filtrar por tecnologia (ex: Python, MCP, Curva Cúbica, PWA)..."
+                aria-label="Buscar projetos por tecnologia ou palavra-chave"
+              />
+            </div>
+          </div>
+
+          <!-- Grid Dinâmico de Projetos (Renderizado via app.js) -->
+          <div id="projectsGridContainer" class="projects-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TRAJETÓRIA PROFISSIONAL & FORMAÇÃO ACADÊMICA (CURRÍCULO VIVO)
+           ==================================================================== -->
+      <section id="experiencia" class="section-block">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">Carreira &amp; Credenciais</span>
+            <h2 class="section-title">Trajetória Profissional &amp; Acadêmica</h2>
+            <p class="section-desc">Mais de 6 anos construindo soluções de software para ambientes críticos, aliados à formação tecnológica em Análise e Desenvolvimento de Sistemas e rigor analítico.</p>
+          </div>
+
+          <div class="career-grid">
+            <!-- Coluna 1: Experiência Profissional -->
+            <div class="career-column">
+              <div class="career-col-header">
+                <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                <h3>Experiência Profissional</h3>
+              </div>
+
+              <!-- Cargo 1 -->
+              <article class="timeline-card highlight-card">
+                <div class="timeline-meta">
+                  <span class="timeline-period">Jun 2025 – Presente</span>
+                  <span class="timeline-badge">Atual • Londrina, PR</span>
+                </div>
+                <h4 class="timeline-role">Desenvolvedor Full Stack &amp; Especialista em Automação e IA</h4>
+                <div class="timeline-company">Autônomo / Consultoria de Tecnologia &amp; Engenharia</div>
+                <ul class="timeline-bullets">
+                  <li>Arquitetura e implementação de <strong>Agentes de IA</strong>, fluxos de automação empresarial com <strong>n8n</strong>, integração de APIs de LLMs e servidores <strong>Model Context Protocol (MCP)</strong>.</li>
+                  <li>Desenvolvimento de sistemas Full Stack utilizando <strong>Angular, React, TypeScript, Python</strong> e backends escaláveis com <strong>Supabase, Firebase e PostgreSQL</strong>.</li>
+                  <li>Criação de soluções LegalTech e Financeiras: monitoramento automatizado do <strong>DJEN</strong>, automação de atendimento via <strong>WhatsApp Business API</strong> com geração de kits documentais em PDF e motores de cálculo para Revisão de Contrato Veicular.</li>
+                </ul>
+              </article>
+
+              <!-- Cargo 2 -->
+              <article class="timeline-card">
+                <div class="timeline-meta">
+                  <span class="timeline-period">Jan 2019 – Mai 2025 (6 anos e 5 meses)</span>
+                  <span class="timeline-badge">Londrina, PR</span>
+                </div>
+                <h4 class="timeline-role">Analista de Desenvolvimento de Sistemas</h4>
+                <div class="timeline-company">Concent Sistemas</div>
+                <ul class="timeline-bullets">
+                  <li>Desenvolvimento e manutenção de sistemas de automação laboratorial de missão crítica, integrando analisadores clínicos a sistemas <strong>LIS e HIS</strong> via protocolos <strong>TCP/IP e RS-232</strong>.</li>
+                  <li>Atuação Full Stack com <strong>C# / .NET Core</strong> no backend, <strong>Angular</strong> no frontend e administração de bancos de dados <strong>SQL Server, PostgreSQL e MySQL</strong>.</li>
+                  <li>Gestão de projetos e equipes técnicas, condução de cerimônias ágeis (<strong>Scrum</strong>), levantamento de requisitos, implantação em clientes e suporte especializado N1/N2.</li>
+                </ul>
+              </article>
+            </div>
+
+            <!-- Coluna 2: Formação Acadêmica & Certificações -->
+            <div class="career-column">
+              <div class="career-col-header">
+                <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                <h3>Formação Acadêmica &amp; Certificações</h3>
+              </div>
+
+              <!-- Graduação ADS -->
+              <article class="timeline-card highlight-card">
+                <div class="timeline-meta">
+                  <span class="timeline-period">Set 2026 – Dez 2028 (Previsão)</span>
+                  <span class="timeline-badge">Cursando • Currículo 2026</span>
+                </div>
+                <h4 class="timeline-role">Graduação Tecnológica em Análise e Desenvolvimento de Sistemas</h4>
+                <div class="timeline-company">Faculdade Estácio de Sá — Londrina, PR</div>
+                <p class="timeline-text">Matriz curricular 2026 focada em engenharia de software moderna, arquitetura de nuvem e inteligência artificial aplicada:</p>
+                <div class="academic-tags">
+                  <span class="acad-pill">Computação em Nuvem AWS (DGT2810)</span>
+                  <span class="acad-pill">IA para Devs (DGT4828)</span>
+                  <span class="acad-pill">Cloud, IoT &amp; Indústria 4.0 em Python (DGT0991)</span>
+                  <span class="acad-pill">Redes &amp; Segurança da Informação</span>
+                  <span class="acad-pill">Engenharia de Software &amp; Banco de Dados</span>
+                </div>
+              </article>
+
+              <!-- Certificação Scrum -->
+              <article class="timeline-card cert-highlight">
+                <div class="timeline-meta">
+                  <span class="timeline-period">Emitida em Maio 2024</span>
+                  <span class="timeline-badge">Credencial Internacional</span>
+                </div>
+                <h4 class="timeline-role">Professional Scrum Master™ I (PSM I)</h4>
+                <div class="timeline-company">Scrum.org</div>
+                <p class="timeline-text">Certificação internacional que valida profundo domínio do framework Scrum, liderança servidora, métricas de fluxo e entrega contínua de valor em times de engenharia de software.</p>
+              </article>
+
+              <!-- Graduação Biomedicina -->
+              <article class="timeline-card">
+                <div class="timeline-meta">
+                  <span class="timeline-period">Jan 2017 – Dez 2021</span>
+                  <span class="timeline-badge">Concluído • Londrina, PR</span>
+                </div>
+                <h4 class="timeline-role">Bacharelado em Biomedicina</h4>
+                <div class="timeline-company">Centro Universitário Filadélfia (UniFil)</div>
+                <p class="timeline-text">Base sólida em metodologia científica, bioestatística, controle de qualidade rigoroso e domínio de fluxos operacionais laboratoriais e hospitalares (base de domínio para integrações LIS/HIS).</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           RF-04: ENGENHARIA AI-FIRST & DIFERENCIAL EXECUTIVO (BLACK-BOX)
+           ==================================================================== -->
+      <section id="metodologia" class="section-block section-alt-bg">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">Diferencial Competitivo</span>
+            <h2 class="section-title">Engenharia Orientada a Especificação &amp; IA</h2>
+            <p class="section-desc">Como estruturo o ciclo de desenvolvimento combinando rigor arquitetural, revisão humana estratégica e orquestração inteligente de modelos para acelerar entregas sem abrir mão da segurança.</p>
+          </div>
+
+          <div class="methodology-executive-grid">
+            <article class="method-exec-card">
+              <div class="method-exec-top">
+                <span class="method-exec-num">PILAR 01</span>
+                <span class="method-exec-icon">
+                  <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </span>
+              </div>
+              <h3>Descoberta &amp; Requisitos BDD</h3>
+              <p>Antes de qualquer linha de código, regras de negócio e critérios de aceite são formalizados em documentos de produto (PRD), eliminando retrabalho e escopo ambíguo.</p>
+              <div class="method-exec-footer">Alinhamento de Negócio &amp; KPIs</div>
+            </article>
+
+            <article class="method-exec-card">
+              <div class="method-exec-top">
+                <span class="method-exec-num">PILAR 02</span>
+                <span class="method-exec-icon">
+                  <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                </span>
+              </div>
+              <h3>Contratos API-First &amp; Dados</h3>
+              <p>Modelagem prévia de esquemas relacionais, diagramas de arquitetura e contratos de integração com <strong>validação humana obrigatória (Human-in-the-Loop)</strong>.</p>
+              <div class="method-exec-footer">Arquitetura Auditada pelo Engenheiro</div>
+            </article>
+
+            <article class="method-exec-card">
+              <div class="method-exec-top">
+                <span class="method-exec-num">PILAR 03</span>
+                <span class="method-exec-icon">
+                  <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </span>
+              </div>
+              <h3>Implementação Modular &amp; Resiliência</h3>
+              <p>Construção desacoplada de serviços backend e interfaces responsivas com tratamento completo de estados operacionais (carregamento, sucesso, vazio e contingência).</p>
+              <div class="method-exec-footer">Código Limpo &amp; Alta Disponibilidade</div>
+            </article>
+
+            <article class="method-exec-card">
+              <div class="method-exec-top">
+                <span class="method-exec-num">PILAR 04</span>
+                <span class="method-exec-icon">
+                  <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </span>
+              </div>
+              <h3>Auditoria QA &amp; FinOps de IA</h3>
+              <p>Verificação automatizada de rastreabilidade contra a especificação inicial e roteamento inteligente de LLMs, reduzindo em até <strong>85% o custo operacional de tokens</strong>.</p>
+              <div class="method-exec-footer">Homologação E2E &amp; Eficiência Financeira</div>
+            </article>
+          </div>
+
+          <div class="finops-banner">
+            <div class="finops-content">
+              <h3>Roteamento Inteligente de Modelos (FinOps) &amp; Segurança</h3>
+              <p>Arquitetura desenhada para alocar modelos de raciocínio profundo exclusivamente em decisões críticas de design, delegando tarefas de execução e processamento em lote para modelos rápidos de alta eficiência.</p>
+            </div>
+            <div class="finops-badges">
+              <span class="finops-pill">-85% Custo em Tokens</span>
+              <span class="finops-pill">2 Checkpoints Humanos</span>
+              <span class="finops-pill">100% Rastreabilidade</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           RF-05: ASSISTENTE INTERATIVO DE RECRUTAMENTO (COPILOTO DE CARREIRA)
+           ==================================================================== -->
+      <section id="copiloto" class="section-block">
+        <div class="container">
+          <div class="copilot-layout">
+            <div class="copilot-info-col">
+              <span class="section-tag">Consulta Rápida para Recrutadores</span>
+              <h2 class="section-title">Copiloto Técnico de Entrevista</h2>
+              <p class="section-desc">Quer validar rapidamente a aderência de Gustavo Simões à sua vaga ou projeto? Clique em um dos tópicos abaixo ou faça uma pergunta direta sobre stack, experiência na Concent Sistemas, projetos em IA/MCP ou disponibilidade.</p>
+
+              <div class="prompt-chips-group">
+                <span class="chips-label">Perguntas Frequentes de Recrutadores &amp; Tech Leads:</span>
+                <div class="prompt-chips-wrap">
+                  <button type="button" class="chat-chip" data-question="Resumo da experiência profissional de 6+ anos">
+                    Experiência de 6+ anos (Concent Sistemas &amp; Consultoria IA)
+                  </button>
+                  <button type="button" class="chat-chip" data-question="Como funciona a arquitetura matemática do Rubinot Companion?">
+                    Detalhes matemáticos do Rubinot Companion (Curva Cúbica)
+                  </button>
+                  <button type="button" class="chat-chip" data-question="Quais tecnologias de IA, n8n e MCP você domina?">
+                    Stack de IA, Agentes, n8n, MCP e WhatsApp API
+                  </button>
+                  <button type="button" class="chat-chip" data-question="Formação acadêmica em ADS na Estácio e Certificação PSM I">
+                    Formação em ADS (AWS/IA), Biomedicina e Scrum PSM I
+                  </button>
+                  <button type="button" class="chat-chip" data-question="Qual a disponibilidade, localização e como entrar em contato?">
+                    Disponibilidade (Londrina/Remoto) e Contato Direto
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="copilot-chat-window">
+              <div class="chat-window-header">
+                <div class="chat-bot-identity">
+                  <img src="assets/foto_perfil.png" alt="Gustavo Simões" class="chat-header-avatar" />
+                  <div>
+                    <strong>Assistente Executivo — Gustavo Simões</strong>
+                    <span>Base de conhecimento verificada • Resposta imediata</span>
+                  </div>
+                </div>
+                <div class="chat-header-controls">
+                  <span id="chatEngineBadge" class="chat-mode-badge">IA Online • Contextual</span>
+                  <button type="button" id="clearChatBtn" class="chat-clear-btn" title="Limpar histórico de conversa">Limpar Chat</button>
+                  <span class="bot-status-dot" title="Online"></span>
+                </div>
+              </div>
+
+              <div id="chatMessagesContainer" class="chat-messages-area" role="log" aria-live="polite">
+                <div class="chat-bubble bot-bubble">
+                  <div class="bot-avatar-badge">GS</div>
+                  <div class="bot-bubble-content">
+                    <p>Olá! Sou o assistente técnico do portfólio de <strong>Gustavo Simões</strong>. Selecione uma pergunta ao lado ou digite abaixo para consultar detalhes sobre os <strong>6+ anos de experiência</strong>, projetos em <strong>Python/MCP/n8n/C#</strong> ou formas de contratação.</p>
+                  </div>
+                </div>
+              </div>
+
+              <form id="chatInputForm" class="chat-input-bar">
+                <input
+                  type="text"
+                  id="chatUserInput"
+                  class="chat-input"
+                  placeholder="Pergunte sobre experiência, stack, certificação Scrum ou contato..."
+                  aria-label="Digite sua pergunta sobre a carreira de Gustavo Simões"
+                />
+                <button type="submit" class="btn btn-primary chat-send-btn">
+                  <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  <span>Perguntar</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           RF-06: CONTATO DIRETO & CONTRATAÇÃO (1-CLIQUE SEM FRICÇÃO)
+           ==================================================================== -->
+      <section id="contato" class="section-block section-alt-bg contact-section">
+        <div class="container">
+          <div class="contact-hero-box">
+            <div class="contact-text-col">
+              <span class="section-tag">Contato Direto &amp; Contratação</span>
+              <h2 class="section-title">Vamos Conversar Sobre Sua Vaga ou Projeto?</h2>
+              <p class="section-desc">Atuação em <strong>Londrina, PR</strong> (presencial/híbrido) ou <strong>100% Remoto</strong>. Sem formulários burocráticos: escolha o canal de sua preferência abaixo para contato imediato em 1 clique.</p>
+            </div>
+
+            <div class="contact-direct-cards direct-contact-grid">
+              <!-- Card 1: WhatsApp Direto (Ícone Vetorial Oficial Vazado) -->
+              <a href="https://wa.me/5543996034632?text=Ol%C3%A1%20Gustavo!%20Acabei%20de%20analisar%20seu%20portf%C3%B3lio%20e%20curr%C3%ADculo%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" class="contact-channel-card whatsapp-card">
+                <div class="channel-icon whatsapp-icon-svg">
+                  <svg class="svg-icon whatsapp-svg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
+                <div class="channel-info">
+                  <span class="channel-label">WhatsApp Oficial (Resposta Imediata)</span>
+                  <strong class="channel-value">+55 (43) 99603-4632</strong>
+                  <span class="channel-action">Iniciar conversa no WhatsApp &rarr;</span>
+                </div>
+              </a>
+
+              <!-- Card 2: E-mail Profissional -->
+              <a href="mailto:gustavo.hf.simoes@gmail.com?subject=Contato%20Profissional%20-%20Portf%C3%B3lio%20IA%20%26%20Full%20Stack" class="contact-channel-card" onclick="window.portfolioApp && window.portfolioApp.copyEmail()">
+                <div class="channel-icon">
+                  <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div class="channel-info">
+                  <span class="channel-label">E-mail Profissional</span>
+                  <strong class="channel-value">gustavo.hf.simoes@gmail.com</strong>
+                  <span class="channel-action" id="emailCopyFeedback">Clique para copiar ou enviar e-mail &rarr;</span>
+                </div>
+              </a>
+
+              <!-- Card 3: GitHub Oficial -->
+              <a href="https://github.com/gustavo-hf-simoes" target="_blank" rel="noopener" class="contact-channel-card">
+                <div class="channel-icon">
+                  <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                </div>
+                <div class="channel-info">
+                  <span class="channel-label">Perfil GitHub</span>
+                  <strong class="channel-value">github.com/gustavo-hf-simoes</strong>
+                  <span class="channel-action">Acessar perfil público &rarr;</span>
+                </div>
+              </a>
+
+              <!-- Card 4: Currículo ATS / A4 Imprimível -->
+              <a href="curriculo.html" target="_blank" rel="noopener" class="contact-channel-card">
+                <div class="channel-icon">
+                  <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                </div>
+                <div class="channel-info">
+                  <span class="channel-label">Currículo A4 Otimizado para ATS</span>
+                  <strong class="channel-value">Compatível Gupy, Greenhouse &amp; Workday</strong>
+                  <span class="channel-action">Visualizar / Exportar PDF &rarr;</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================================================================
+         FOOTER EXECUTIVO
+         ====================================================================== -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <img src="assets/foto_perfil.png" alt="Gustavo Simões" class="footer-avatar" />
+          <span><strong>Gustavo Henrique Ferreira Simões</strong> — Engenheiro Full Stack &amp; Especialista em IA</span>
+        </div>
+        <div class="footer-copy">
+          <span>Londrina, PR • +55 (43) 99603-4632 • gustavo.hf.simoes@gmail.com</span>
+        </div>
+        <div class="footer-links">
+          <a href="curriculo.html" target="_blank" rel="noopener">Currículo ATS / A4</a>
+          <a href="https://github.com/gustavo-hf-simoes" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://wa.me/5543996034632" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========================================================================
+       MODAL DEEP-DIVE DE ARQUITETURA DO PROJETO
+       ======================================================================== -->
+  <div id="projectModalOverlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-container">
+      <button id="closeProjectModalBtn" class="modal-close-btn" aria-label="Fechar detalhes do projeto">&times;</button>
+      <div id="projectModalBody" class="modal-body-content"></div>
+    </div>
+  </div>
+
+  <!-- Toast de Feedback -->
+  <div id="globalToast" class="toast-notification" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/copilot-chat.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

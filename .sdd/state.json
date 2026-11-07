@@ -1,0 +1,206 @@
+{
+  "projectName": "Portfólio Profissional (Analista de IA)",
+  "slug": "portfolio-profissional-analista-de-ia",
+  "projectPath": "c:\\Users\\gusta\\antigravity\\pc\\projetos\\portfolio-profissional-analista-de-ia",
+  "createdAt": "2026-11-07T05:58:33.129Z",
+  "updatedAt": "2026-11-07T08:47:12.107Z",
+  "currentStage": "completed",
+  "stages": {
+    "00_inbox": {
+      "name": "Ideia & Inbox",
+      "status": "completed",
+      "file": ".sdd/00_inbox/idea.md",
+      "completedAt": "2026-11-07T05:58:33.129Z"
+    },
+    "01_product": {
+      "name": "Product Discovery (PRD)",
+      "status": "completed",
+      "file": ".sdd/01_product/PRD.md",
+      "completedAt": "2026-11-07T06:03:05.000Z"
+    },
+    "checkpoint_1": {
+      "name": "Checkpoint 1 (Aprovação PRD)",
+      "status": "completed",
+      "approved": true,
+      "approvedAt": "2026-11-07T05:59:09.690Z",
+      "notes": "Aprovado pelo usuário para avanço imediato"
+    },
+    "02_architecture": {
+      "name": "Arquitetura & Modelagem de Dados",
+      "status": "completed",
+      "files": {
+        "spec": ".sdd/02_architecture/SPEC.md",
+        "db": ".sdd/02_architecture/DB_SCHEMA.md",
+        "tasks": ".sdd/02_architecture/TASKS.md"
+      },
+      "completedAt": "2026-11-07T07:01:04.839Z"
+    },
+    "checkpoint_2": {
+      "name": "Checkpoint 2 (Aprovação Arquitetura & Stack)",
+      "status": "pending",
+      "approved": false,
+      "approvedAt": "2026-11-07T06:47:36.945Z",
+      "notes": "Refinado com IA: Deu erro ao rodar testes: Rota não encontrada na API SDD. E o live preview não f..."
+    },
+    "03_development": {
+      "name": "Desenvolvimento Backend & Frontend",
+      "status": "completed",
+      "files": {
+        "backend": ".sdd/03_development/BACKEND_HANDOFF.md",
+        "frontend": ".sdd/03_development/FRONTEND_HANDOFF.md"
+      },
+      "completedAt": "2026-11-07T06:47:36.950Z"
+    },
+    "04_qa": {
+      "name": "Auditoria de QA & Conformidade",
+      "status": "completed",
+      "file": ".sdd/04_qa/QA_REPORT.md",
+      "passed": true,
+      "score": 100,
+      "completedAt": "2026-11-07T08:47:12.107Z",
+      "tests": [
+        {
+          "id": "TEST-01",
+          "name": "Governança & Especificação SDD",
+          "passed": true,
+          "durationMs": 1,
+          "details": "5/5 artefatos de especificação validados: idea.md (0.8 KB), PRD.md (13.9 KB), SPEC.md (7.7 KB), DB_SCHEMA.md (1.8 KB), TASKS.md (0.9 KB)"
+        },
+        {
+          "id": "TEST-02",
+          "name": "Artefatos de Interface / Código Modular",
+          "passed": true,
+          "durationMs": 2,
+          "details": "Artefatos funcionais validados: index.html (53.8 KB), css\\style.css (46.8 KB), js\\app.js (25.9 KB), tests/test-suite.js, package.json"
+        },
+        {
+          "id": "TEST-03",
+          "name": "Validação Sintática JavaScript",
+          "passed": true,
+          "durationMs": 3,
+          "details": "Sintaxe JavaScript validada sem erros (7 módulo(s) verificado(s))"
+        },
+        {
+          "id": "TEST-04",
+          "name": "Cobertura dos 4 Estados Visuais na UI",
+          "passed": true,
+          "durationMs": 3,
+          "details": "Todos os 4 estados visuais implementados: Loading, Success, Empty, Error"
+        },
+        {
+          "id": "TEST-05",
+          "name": "Rastreabilidade de Requisitos do PRD",
+          "passed": true,
+          "durationMs": 2,
+          "details": "6/6 requisitos cobertos (RF-01, RF-02, RF-03, RF-04, RF-05, RF-06)"
+        }
+      ],
+      "previewUrl": "http://127.0.0.1:20129/preview/portfolio-profissional-analista-de-ia/"
+    }
+  },
+  "history": [
+    {
+      "stage": "00_inbox",
+      "action": "Projeto inicializado na SDD Factory",
+      "timestamp": "2026-11-07T05:58:33.129Z"
+    },
+    {
+      "stage": "checkpoint_1",
+      "action": "Checkpoint aprovado pelo usuário",
+      "notes": "Aprovado pelo usuário para avanço imediato",
+      "timestamp": "2026-11-07T05:59:09.690Z"
+    },
+    {
+      "stage": "01_product",
+      "action": "PRD gerado com sucesso com foco estratégico em Analista de IA e os 5 cases reais de produção",
+      "timestamp": "2026-11-07T06:03:05.000Z"
+    },
+    {
+      "stage": "02_architecture",
+      "action": "Especificações técnicas (SPEC.md), modelagem relacional (DB_SCHEMA.md) e tarefas (TASKS.md) concluídas",
+      "timestamp": "2026-11-07T06:04:40.000Z"
+    },
+    {
+      "stage": "checkpoint_2",
+      "action": "Checkpoint 2 submetido — aguardando aprovação de Arquitetura e Stack pelo usuário",
+      "timestamp": "2026-11-07T06:05:30.000Z"
+    },
+    {
+      "stage": "manual_edit",
+      "action": "Arquivo lessons_learned.md editado manualmente pelo usuário no painel",
+      "timestamp": "2026-11-07T06:15:13.184Z"
+    },
+    {
+      "stage": "manual_edit",
+      "action": "Arquivo PRD.md editado manualmente pelo usuário no painel",
+      "timestamp": "2026-11-07T06:44:56.116Z"
+    },
+    {
+      "stage": "02_architecture",
+      "action": "Agente sdd-architect gerou SPEC.md, DB_SCHEMA.md, TASKS.md e ADR.md",
+      "timestamp": "2026-11-07T06:45:03.750Z"
+    },
+    {
+      "stage": "checkpoint_2",
+      "action": "Checkpoint aprovado pelo usuário",
+      "notes": "Aprovado em 1 clique pelo painel SDD Factory",
+      "timestamp": "2026-11-07T06:47:36.945Z"
+    },
+    {
+      "stage": "03_development",
+      "action": "Desenvolvimento backend e frontend concluído com os 4 estados visuais",
+      "timestamp": "2026-11-07T06:47:36.950Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Auditoria de QA homologada com score 100/100",
+      "timestamp": "2026-11-07T06:47:36.953Z"
+    },
+    {
+      "stage": "02_architecture",
+      "action": "SPEC.md ajustada com IA baseado nas instruções do usuário",
+      "notes": "Deu erro ao rodar testes: Rota não encontrada na API SDD. E o live preview não funcionou legal",
+      "timestamp": "2026-11-07T07:01:04.839Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T07:01:07.546Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T07:01:07.968Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T07:28:36.335Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T07:44:42.907Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T07:54:40.999Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T08:16:10.014Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T08:45:58.062Z"
+    },
+    {
+      "stage": "04_qa",
+      "action": "Suite de Testes Automatizados executada: 5/5 passaram (Score: 100/100)",
+      "timestamp": "2026-11-07T08:47:12.107Z"
+    }
+  ]
+}

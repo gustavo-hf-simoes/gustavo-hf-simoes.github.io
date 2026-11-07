@@ -1,0 +1,423 @@
+﻿:root {
+      --ink-primary: #0f172a;
+      --ink-secondary: #1e293b;
+      --ink-body: #334155;
+      --ink-muted: #475569;
+      --accent: #1d4ed8;
+      --border-line: #cbd5e1;
+      --bg-screen: #070c18;
+      --paper-bg: #ffffff;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background-color: var(--bg-screen);
+      color: var(--ink-primary);
+      line-height: 1.42;
+      -webkit-font-smoothing: antialiased;
+      padding: 5.25rem 1rem 3rem;
+    }
+
+    /* Barra de Controle e Auditoria ATS (Exibida apenas na tela, oculta no PDF/ImpressÃ£o) */
+    .top-action-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(8, 14, 28, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 0.7rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      color: #f8fafc;
+    }
+
+    .bar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .ats-score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.32rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #34d399;
+    }
+
+    .mode-switch-group {
+      display: inline-flex;
+      background: #0f172a;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 8px;
+      padding: 2px;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .mode-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 0.95rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: #1e293b;
+      color: #f8fafc;
+      transition: all 0.18s ease;
+    }
+
+    .action-btn:hover {
+      border-color: #38bdf8;
+      background: #334155;
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, #0ea5e9, #4f46e5);
+      border-color: transparent;
+      color: #ffffff;
+    }
+
+    .action-btn.whatsapp {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      border-color: rgba(134, 239, 172, 0.4);
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .action-btn.whatsapp svg {
+      fill: currentColor !important;
+      stroke: none !important;
+    }
+
+    /* Folha A4 Linear 100% ATS-Friendly (Coluna Ãšnica de Leitura Sequencial) */
+    .a4-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: var(--paper-bg);
+      padding: 11mm 14mm;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+      border-radius: 4px;
+      color: var(--ink-primary);
+    }
+
+    /* CabeÃ§alho Linear */
+    .cv-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      border-bottom: 2px solid var(--ink-primary);
+      padding-bottom: 7px;
+      margin-bottom: 9px;
+    }
+
+    .cv-header-main {
+      flex: 1;
+    }
+
+    .cv-name {
+      font-size: 18pt;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink-primary);
+      text-transform: uppercase;
+      line-height: 1.15;
+    }
+
+    .cv-headline {
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 2px;
+      margin-bottom: 5px;
+    }
+
+    .cv-contact-line {
+      font-size: 8.4pt;
+      color: var(--ink-body);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.65rem;
+      line-height: 1.35;
+    }
+
+    .cv-contact-line a {
+      color: var(--ink-body);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .cv-contact-sep {
+      color: #94a3b8;
+    }
+
+    /* Retrato Executivo Opcional (Oculto por padrÃ£o no Modo ATS Puro) */
+    .cv-portrait-box {
+      display: none;
+      width: 66px;
+      height: 66px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid var(--ink-primary);
+      flex-shrink: 0;
+    }
+
+    body.with-photo .cv-portrait-box {
+      display: block;
+    }
+
+    .cv-portrait-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 15%;
+    }
+
+    /* SeÃ§Ãµes Padronizadas para Parsers ATS (Gupy, Greenhouse, Workday, Lever) */
+    .cv-section {
+      margin-bottom: 8.5px;
+    }
+
+    .cv-section-title {
+      font-size: 9.2pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-primary);
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 2px;
+      margin-bottom: 5px;
+    }
+
+    .cv-summary {
+      font-size: 8.6pt;
+      color: var(--ink-body);
+      text-align: justify;
+      line-height: 1.4;
+    }
+
+    .cv-summary strong {
+      color: var(--ink-primary);
+      font-weight: 600;
+    }
+
+    /* CompetÃªncias TÃ©cnicas em Lista Textual Linear (100% ParseÃ¡vel por ATS) */
+    .skills-linear-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5px;
+      font-size: 8.4pt;
+      color: var(--ink-body);
+    }
+
+    .skill-row strong {
+      color: var(--ink-primary);
+      font-weight: 700;
+    }
+
+    /* ExperiÃªncia Profissional */
+    .exp-item {
+      margin-bottom: 7px;
+    }
+
+    .exp-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .exp-role {
+      font-size: 9.2pt;
+      font-weight: 700;
+      color: var(--ink-primary);
+    }
+
+    .exp-company {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .exp-date {
+      font-family: 'Inter', sans-serif;
+      font-size: 8.2pt;
+      font-weight: 600;
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+
+    .exp-bullets {
+      margin-top: 2.5px;
+      padding-left: 13px;
+      font-size: 8.4pt;
+      color: var(--ink-body);
+    }
+
+    .exp-bullets li {
+      margin-bottom: 2px;
+      line-height: 1.36;
+    }
+
+    .exp-bullets strong {
+      color: var(--ink-primary);
+      font-weight: 600;
+    }
+
+    /* Projetos TÃ©cnicos em Destaque (Linear) */
+    .proj-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4.5px;
+    }
+
+    .proj-item {
+      font-size: 8.35pt;
+      color: var(--ink-body);
+      line-height: 1.36;
+    }
+
+    .proj-item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .proj-title {
+      font-weight: 700;
+      color: var(--ink-primary);
+    }
+
+    .proj-stack {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* FormaÃ§Ã£o AcadÃªmica & CertificaÃ§Ãµes */
+    .edu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .edu-item {
+      font-size: 8.4pt;
+      color: var(--ink-body);
+    }
+
+    .edu-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .edu-degree {
+      font-weight: 700;
+      color: var(--ink-primary);
+    }
+
+    .edu-details {
+      font-size: 8pt;
+      color: var(--ink-muted);
+      margin-top: 1px;
+    }
+
+    /* ConfiguraÃ§Ã£o Estrita de ImpressÃ£o A4 em 1 PÃ¡gina */
+    @page {
+      size: A4 portrait;
+      margin: 9mm 12mm;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+        margin: 0;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .a4-page {
+        width: 100%;
+        min-height: auto;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        border: none;
+      }
+      a {
+        text-decoration: none !important;
+        color: inherit !important;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .a4-page {
+        width: 100%;
+        padding: 1.25rem;
+      }
+      .top-action-bar {
+        position: static;
+        margin-bottom: 1rem;
+      }
+      body {
+        padding-top: 0;
+      }
+      .exp-header,
+      .proj-item-head,
+      .edu-line {
+        flex-direction: column;
+      }
+    }

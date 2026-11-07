@@ -1,0 +1,24 @@
+{
+  "name": "portfolio-profissional-analista-de-ia",
+  "version": "1.0.0",
+  "description": "Portfólio Executivo & Curriculo ATS de Gustavo Henrique Ferreira Simões - Analista de IA & Desenvolvedor Full Stack",
+  "main": "serve.js",
+  "scripts": {
+    "start": "node serve.js",
+    "test": "node tests/test-suite.js"
+  },
+  "keywords": [
+    "portfolio",
+    "ai-engineer",
+    "full-stack",
+    "mcp",
+    "sdd",
+    "omniroute",
+    "ats-resume"
+  ],
+  "author": "Gustavo Henrique Ferreira Simões <gustavo.hf.simoes@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
