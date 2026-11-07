@@ -1,7 +1,7 @@
-﻿{
-    "mode":  "hybrid-24-7",
-    "staticDomain":  "https://gustavo-hf-simoes.github.io/portfolio-profissional-analista-de-ia/",
+{
+    "staticDomain":  "https://gustavo-hf-simoes.github.io/",
+    "updatedAt":  "2026-11-07T06:34:16-03:00",
     "tunnelBaseUrl":  "https://requirements-pvc-duplicate-determined.trycloudflare.com",
-    "updatedAt":  "2026-11-07T06:25:53-03:00",
+    "mode":  "hybrid-24-7",
     "fallbackMode":  "local-copilot-engine"
 }

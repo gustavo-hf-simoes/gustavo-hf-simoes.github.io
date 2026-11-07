@@ -154,13 +154,14 @@ if (Test-Path $TunnelConfigFile) {
         }
         $jsonRaw.updatedAt = (Get-Date).ToString("yyyy-MM-ddTHH:mm:sszzz")
         $newJson = $jsonRaw | ConvertTo-Json -Depth 5
-        [System.IO.File]::WriteAllText($TunnelConfigFile, $newJson, [System.Text.Encoding]::UTF8)
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        [System.IO.File]::WriteAllText($TunnelConfigFile, $newJson, $utf8NoBom)
         Write-Host " -> 'tunnel-config.json' atualizado com sucesso ($TunnelConfigFile)." -ForegroundColor Green
 
         # Sincronizar automaticamente tunnel-config.json no GitHub Pages via gh api (se autenticado)
         $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
         if ($ghCmd -and $tunnelUrl) {
-            $b64Content = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($newJson))
+            $b64Content = [Convert]::ToBase64String($utf8NoBom.GetBytes($newJson))
             foreach ($repoName in @("gustavo-hf-simoes/gustavo-hf-simoes.github.io", "gustavo-hf-simoes/portfolio-profissional-analista-de-ia")) {
                 try {
                     $existingFile = gh api "repos/$repoName/contents/assets/tunnel-config.json" 2>$null | ConvertFrom-Json
