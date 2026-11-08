@@ -30,6 +30,7 @@ A aplicação adota o modelo **Zero-Trust & Zero-Dependência**, garantindo que:
 | **Whitelist de Modelos OmniRoute** | ✅ SEGURO | Nenhuma | Validação contra lista autorizada (`cascata-principal`, `rapido-flash`, `gratis-lote`). Entradas inválidas revertem silenciosamente para o modelo padrão. |
 | **Prevenção de SQL / NoSQL Injection** | ✅ SEGURO | Nenhuma | Modelagem de dados 100% estática (`js/data.js`). Zero interpolação dinâmica de comandos ou acesso a bancos desprotegidos. |
 | **Healthcheck & Observabilidade** | ✅ SEGURO | Nenhuma | Endpoint `GET /api/health` ativo retornando status da arquitetura `hybrid-zero-trust` em JSON. |
+| **Proteção de IP & Anti-Clonagem Client-Side** | ✅ SEGURO | Nenhuma | Repositórios no GitHub convertidos para **PRIVADOS**. Bloqueio `HTTP 403` em `serve.js` para download de arquivos fonte soltos (`js/data.js`, `js/engine.js`). Frontend servido exclusivamente via bundles minificados com strings criptografadas em Base64 com rotação de índices (`app.bundle.min.js`, `curriculo.bundle.min.js`). |
 
 ---
 
