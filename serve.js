@@ -442,6 +442,16 @@ function serveStaticFile(req, res) {
     return res.end('403 Acesso Negado');
   }
 
+  // 4. Blindagem Anti-Clonagem JS: Apenas bundles ofuscados podem ser servidos na web
+  if (lowerSegments[0] === 'js') {
+    const allowedJsFiles = ['app.bundle.min.js', 'curriculo.bundle.min.js'];
+    const requestedJsFile = lowerSegments[lowerSegments.length - 1];
+    if (!allowedJsFiles.includes(requestedJsFile)) {
+      res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+      return res.end('403 Acesso Negado — Código-fonte protegido contra clonagem');
+    }
+  }
+
   const filePath = path.join(PUBLIC_DIR, safePath);
   if (!filePath.startsWith(PUBLIC_DIR)) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });

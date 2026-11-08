@@ -93,7 +93,10 @@ async function runTestSuite() {
     "README.md",
     "index.html",
     "curriculo.html",
-    "metrics.html"
+    "metrics.html",
+    "js/app.bundle.min.js",
+    "js/curriculo.bundle.min.js",
+    "scripts/build-obfuscate.js"
   ];
 
   requiredFiles.forEach((relPath) => {
@@ -114,10 +117,16 @@ async function runTestSuite() {
     assert.strictEqual(/<style\b[^>]*>/i.test(cv), false);
   });
 
-  it("curriculo.html deve importar css/curriculo.css e js/resume-ats.js", () => {
+  it("curriculo.html deve importar css/curriculo.css e o bundle ofuscado js/curriculo.bundle.min.js", () => {
     const cv = fs.readFileSync(path.join(ROOT_DIR, "curriculo.html"), "utf-8");
     assert.ok(cv.includes('href="css/curriculo.css"'));
-    assert.ok(cv.includes('src="js/resume-ats.js"'));
+    assert.ok(cv.includes('src="js/curriculo.bundle.min.js"'));
+  });
+
+  it("index.html deve importar o bundle unificado e ofuscado js/app.bundle.min.js", () => {
+    const idx = fs.readFileSync(path.join(ROOT_DIR, "index.html"), "utf-8");
+    assert.ok(idx.includes('src="js/app.bundle.min.js"'));
+    assert.strictEqual(idx.includes('src="js/data.js"'), false, "index.html não deve expor scripts legíveis soltos");
   });
 
   it("curriculo.html deve conter dados de contato e localização oficial (Londrina/PR)", () => {
@@ -344,6 +353,17 @@ async function runTestSuite() {
     assert.ok(typeof data.uniqueVisitors === "number");
     assert.ok(typeof data.whatsappClicks === "number");
     assert.ok(Array.isArray(data.topReferrers));
+  });
+
+  await itAsync("GET /js/data.js deve retornar 403 Acesso Negado (código-fonte protegido contra download direto)", async () => {
+    const res = await makeRequest(testPort, "/js/data.js");
+    assert.strictEqual(res.statusCode, 403, `Esperado 403, recebido ${res.statusCode}`);
+  });
+
+  await itAsync("GET /js/app.bundle.min.js deve retornar 200 com bundle unificado e ofuscado", async () => {
+    const res = await makeRequest(testPort, "/js/app.bundle.min.js");
+    assert.strictEqual(res.statusCode, 200, `Esperado 200, recebido ${res.statusCode}`);
+    assert.ok(res.body.length > 5000);
   });
 
   await itAsync("Todas as respostas devem conter Security Headers OWASP (X-Frame-Options, nosniff, etc)", async () => {
