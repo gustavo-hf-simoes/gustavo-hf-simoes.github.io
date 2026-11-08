@@ -9,9 +9,15 @@ const os = require('os');
 
 const PORT = parseInt(process.env.PORT, 10) || 3001;
 const PUBLIC_DIR = __dirname;
+const DATA_DIR = path.join(PUBLIC_DIR, 'data');
+const TELEMETRY_FILE = path.join(DATA_DIR, 'telemetry_events.jsonl');
 const OMNIROUTE_URL = process.env.OMNIROUTE_URL || 'http://127.0.0.1:20128/v1/chat/completions';
 const OMNIROUTE_TIMEOUT_MS = 8000;
 const MAX_PAYLOAD_BYTES = 16 * 1024; // 16 KB
+
+if (!fs.existsSync(DATA_DIR)) {
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (_) {}
+}
 
 const ALLOWED_MODELS = ['cascata-principal', 'rapido-flash', 'gratis-lote'];
 const INJECTION_PATTERNS = [
@@ -257,6 +263,148 @@ async function handleChatEndpoint(req, res) {
   });
 }
 
+function handleTelemetryEndpoint(req, res) {
+  applySecurityAndCorsHeaders(res);
+  const clientIp = getClientIp(req);
+
+  let body = '';
+  req.on('data', chunk => {
+    body += chunk;
+    if (body.length > MAX_PAYLOAD_BYTES) req.destroy();
+  });
+
+  req.on('end', () => {
+    try {
+      const parsed = JSON.parse(body || '{}');
+      const eventType = String(parsed.type || 'pageview').slice(0, 50);
+
+      const eventRecord = {
+        type: eventType,
+        page: String(parsed.page || '/').slice(0, 100),
+        referrer: String(parsed.referrer || 'direto').slice(0, 200),
+        sessionId: String(parsed.sessionId || '').slice(0, 50),
+        screenRes: String(parsed.screenRes || '').slice(0, 20),
+        timeOnPageSec: parseInt(parsed.timeOnPageSec, 10) || 0,
+        timestamp: parsed.timestamp || new Date().toISOString(),
+        receivedAt: new Date().toISOString(),
+        ip: clientIp,
+        country: (req.headers['cf-ipcountry'] || '').slice(0, 10),
+        city: (req.headers['cf-ipcity'] || '').slice(0, 50),
+        region: (req.headers['cf-region'] || '').slice(0, 50),
+        metadata: typeof parsed.metadata === 'object' && parsed.metadata !== null ? parsed.metadata : {}
+      };
+
+      const line = JSON.stringify(eventRecord) + '\n';
+      fs.appendFile(TELEMETRY_FILE, line, 'utf-8', () => {});
+
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: true }));
+    } catch {
+      res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: false, error: 'JSON malformado' }));
+    }
+  });
+}
+
+function handleMetricsEndpoint(req, res) {
+  applySecurityAndCorsHeaders(res);
+
+  if (!fs.existsSync(TELEMETRY_FILE)) {
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify({
+      totalEvents: 0,
+      totalPageviews: 0,
+      uniqueVisitors: 0,
+      whatsappClicks: 0,
+      curriculoViews: 0,
+      copilotOpens: 0,
+      projectClicks: {},
+      topReferrers: [],
+      topCities: [],
+      recentEvents: []
+    }));
+  }
+
+  fs.readFile(TELEMETRY_FILE, 'utf-8', (err, rawData) => {
+    if (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: false, error: 'Erro ao ler telemetria' }));
+    }
+
+    const lines = rawData.split('\n').filter(Boolean);
+    const events = [];
+    const ipSet = new Set();
+    const referrerMap = new Map();
+    const cityMap = new Map();
+    const projectClickMap = {
+      'djen-mcp': 0,
+      'rubinot-ai': 0,
+      'calc-coffee': 0,
+      'sdd-factory': 0
+    };
+
+    let totalPageviews = 0;
+    let whatsappClicks = 0;
+    let curriculoViews = 0;
+    let copilotOpens = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      try {
+        const ev = JSON.parse(lines[i]);
+        events.push(ev);
+        if (ev.ip) ipSet.add(ev.ip);
+
+        if (ev.type === 'pageview') {
+          totalPageviews++;
+          if (ev.page && ev.page.includes('curriculo')) curriculoViews++;
+        } else if (ev.type === 'click_whatsapp') {
+          whatsappClicks++;
+        } else if (ev.type === 'click_curriculo') {
+          curriculoViews++;
+        } else if (ev.type === 'open_copilot') {
+          copilotOpens++;
+        } else if (ev.type === 'click_project') {
+          const pId = ev.metadata?.projectId || '';
+          if (projectClickMap[pId] !== undefined) projectClickMap[pId]++;
+          else projectClickMap[pId] = (projectClickMap[pId] || 0) + 1;
+        }
+
+        const ref = (ev.referrer && ev.referrer !== 'direto') ? new URL(ev.referrer, 'http://localhost').hostname : 'Direto / Link';
+        referrerMap.set(ref, (referrerMap.get(ref) || 0) + 1);
+
+        const loc = [ev.city, ev.country].filter(Boolean).join(', ') || 'Local / Direto';
+        cityMap.set(loc, (cityMap.get(loc) || 0) + 1);
+      } catch (_) {}
+    }
+
+    const topReferrers = Array.from(referrerMap.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 6);
+
+    const topCities = Array.from(cityMap.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 6);
+
+    const recentEvents = events.slice(-50).reverse();
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify({
+      totalEvents: events.length,
+      totalPageviews,
+      uniqueVisitors: ipSet.size,
+      whatsappClicks,
+      curriculoViews,
+      copilotOpens,
+      projectClicks: projectClickMap,
+      topReferrers,
+      topCities,
+      recentEvents
+    }));
+  });
+}
+
 function serveStaticFile(req, res) {
   applySecurityAndCorsHeaders(res);
 
@@ -274,7 +422,7 @@ function serveStaticFile(req, res) {
 
   // 2. Bloqueio de arquivos internos e infraestrutura
   const lowerSegments = segments.map(s => s.toLowerCase());
-  const blockedRoots = ['tests', 'scripts', 'node_modules', '.agents', '.sdd', '.git'];
+  const blockedRoots = ['tests', 'scripts', 'node_modules', '.agents', '.sdd', '.git', 'data'];
   const blockedFiles = ['serve.js', 'package.json', 'package-lock.json', 'readme.md'];
 
   if (blockedRoots.includes(lowerSegments[0]) || (lowerSegments.length === 1 && blockedFiles.includes(lowerSegments[0]))) {
@@ -283,7 +431,7 @@ function serveStaticFile(req, res) {
   }
 
   // 3. Whitelist Estrita de recursos públicos
-  const allowedRootFiles = ['index.html', 'curriculo.html', 'robots.txt', 'favicon.ico'];
+  const allowedRootFiles = ['index.html', 'curriculo.html', 'metrics.html', 'robots.txt', 'favicon.ico'];
   const allowedDirs = ['css', 'js', 'assets'];
 
   const isAllowedRoot = lowerSegments.length === 1 && allowedRootFiles.includes(lowerSegments[0]);
@@ -342,6 +490,14 @@ const server = http.createServer((req, res) => {
     return handleChatEndpoint(req, res);
   }
 
+  if (cleanUrl === '/api/portfolio/telemetry' && req.method === 'POST') {
+    return handleTelemetryEndpoint(req, res);
+  }
+
+  if (cleanUrl === '/api/portfolio/metrics' && req.method === 'GET') {
+    return handleMetricsEndpoint(req, res);
+  }
+
   return serveStaticFile(req, res);
 });
 
@@ -349,7 +505,14 @@ if (require.main === module) {
   server.listen(PORT, '0.0.0.0', () => {
     const ip = getLocalIp();
     console.log(`Portfólio Executivo ativo: http://localhost:${PORT}/ (Rede: http://${ip}:${PORT}/)`);
+    console.log(`Painel de Métricas:        http://localhost:${PORT}/metrics.html`);
   });
 }
 
-module.exports = { server, handleChatEndpoint, SYSTEM_PROMPT_EXECUTIVO };
+module.exports = {
+  server,
+  handleChatEndpoint,
+  handleTelemetryEndpoint,
+  handleMetricsEndpoint,
+  SYSTEM_PROMPT_EXECUTIVO
+};

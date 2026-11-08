@@ -84,6 +84,7 @@ async function runTestSuite() {
     "js/data.js",
     "js/engine.js",
     "js/copilot-chat.js",
+    "js/telemetry.js",
     "js/resume-ats.js",
     "js/app.js",
     "serve.js",
@@ -91,7 +92,8 @@ async function runTestSuite() {
     ".gitignore",
     "README.md",
     "index.html",
-    "curriculo.html"
+    "curriculo.html",
+    "metrics.html"
   ];
 
   requiredFiles.forEach((relPath) => {
@@ -285,6 +287,63 @@ async function runTestSuite() {
     assert.strictEqual(data.architecture, "hybrid-zero-trust");
     assert.strictEqual(data.service, "portfolio-gustavo-simoes");
     assert.ok(data.timestamp);
+  });
+
+  await itAsync("GET /metrics.html deve retornar 200 com painel executivo", async () => {
+    const res = await makeRequest(testPort, "/metrics.html");
+    assert.strictEqual(res.statusCode, 200, `Esperado 200, recebido ${res.statusCode}`);
+    assert.ok(res.body.includes("Telemetria"), "Deve conter título de telemetria");
+  });
+
+  await itAsync("GET /data/telemetry_events.jsonl deve retornar 403 Acesso Negado (bloqueio de dados)", async () => {
+    const res = await makeRequest(testPort, "/data/telemetry_events.jsonl");
+    assert.strictEqual(res.statusCode, 403, `Esperado 403, recebido ${res.statusCode}`);
+  });
+
+  await itAsync("POST /api/portfolio/telemetry deve registrar evento com sucesso (200)", async () => {
+    const res = await new Promise((resolve, reject) => {
+      const payload = JSON.stringify({
+        type: "click_whatsapp",
+        page: "/",
+        referrer: "https://linkedin.com/in/gustavo",
+        timeOnPageSec: 42,
+        metadata: { source: "hero_cta" }
+      });
+      const req = http.request({
+        hostname: "127.0.0.1",
+        port: testPort,
+        path: "/api/portfolio/telemetry",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(payload),
+          "cf-connecting-ip": "189.100.20.10",
+          "cf-ipcountry": "BR",
+          "cf-ipcity": "Londrina"
+        }
+      }, (res) => {
+        let body = "";
+        res.on("data", chunk => (body += chunk));
+        res.on("end", () => resolve({ statusCode: res.statusCode, body }));
+      });
+      req.on("error", reject);
+      req.write(payload);
+      req.end();
+    });
+
+    assert.strictEqual(res.statusCode, 200);
+    const data = JSON.parse(res.body);
+    assert.strictEqual(data.success, true);
+  });
+
+  await itAsync("GET /api/portfolio/metrics deve retornar consolidado analítico (200)", async () => {
+    const res = await makeRequest(testPort, "/api/portfolio/metrics");
+    assert.strictEqual(res.statusCode, 200);
+    const data = JSON.parse(res.body);
+    assert.ok(typeof data.totalEvents === "number");
+    assert.ok(typeof data.uniqueVisitors === "number");
+    assert.ok(typeof data.whatsappClicks === "number");
+    assert.ok(Array.isArray(data.topReferrers));
   });
 
   await itAsync("Todas as respostas devem conter Security Headers OWASP (X-Frame-Options, nosniff, etc)", async () => {
