@@ -255,7 +255,7 @@ class CopilotChatEngine {
         "Olá! Sou o **Copiloto Técnico de Gustavo Simões**.\n\n" +
         "Estou aqui para apresentar a trajetória de mais de **6 anos em desenvolvimento de sistemas críticos**, " +
         "suas especializações em **Engenharia de IA, MCP, n8n, C#/.NET, Python, Angular e SQL**, além dos 4 cases práticos em produção.\n\n" +
-        "Você pode me perguntar sobre os projetos (**Rubinot Companion**, **DJEN LegalTech**, **Calc Coffee PWA**, **Esteira SDD**), " +
+        "Você pode me perguntar sobre os projetos (**DJEN LegalTech**, **Calc Coffee PWA**, **Esteira Multi-Agente SDD**), " +
         "sua experiência na **Concent Sistemas**, certificação **PSM I** ou como **entrar em contato direto**!"
       );
     }
@@ -389,11 +389,11 @@ class CopilotChatEngine {
     return (
       `Entendi sua pergunta sobre "${raw}".\n\n` +
       "Gustavo Simões atua como **Analista de IA & Desenvolvedor Full Stack**, somando mais de **6 anos de experiência em produção** (Concent Sistemas, C#/.NET, Angular, LIS/HIS, TCP-IP, SQL) com especialização avançada em **Agentes de IA, Model Context Protocol (MCP), n8n e esteiras SDD**.\n\n" +
-      "Recomendo explorar os 4 cases em destaque ou me perguntar especificamente sobre:\n" +
-      "• A matemática cúbica e telemetria do **Rubinot Companion**\n" +
-      "• O servidor MCP e triagem WhatsApp do **DJEN LegalTech**\n" +
-      "• A arquitetura PWA offline-first do **Calc Coffee**\n" +
-      "• A governança e economia de tokens da **Esteira SDD**\n" +
+      "Recomendo explorar os cases em destaque no portfólio ou me perguntar especificamente sobre:\n" +
+      "• O servidor MCP e triagem WhatsApp do **DJEN LegalTech** (-90% tempo de atendimento)\n" +
+      "• A arquitetura PWA offline-first e bússola sensorial do **Calc Coffee**\n" +
+      "• A governança e economia de até 85% de tokens da **Esteira Multi-Agente SDD**\n" +
+      "• A experiência de mais de 6 anos na **Concent Sistemas** com C#/.NET e automação hospitalar\n" +
       "• Sua disponibilidade para **contratação PJ/CLT** em Londrina ou Remoto."
     );
   }
