@@ -17,7 +17,7 @@ class PortfolioController {
 
     this.testSteps = [
       { id: "rf01", label: "RF-01: Hero Executivo, CTAs & Currículo A4", status: "pending" },
-      { id: "rf02", label: "RF-02: Matriz de Competências & 4 Cases Reais (Sem Estácio)", status: "pending" },
+      { id: "rf02", label: "RF-02: Matriz de Competências & Catálogo Dinâmico de Cases", status: "pending" },
       { id: "rf03", label: "RF-03: Modal Deep-Dive c/ Arquitetura Mermaid & Métricas", status: "pending" },
       { id: "rf04", label: "RF-04: Trajetória Concent Sistemas + ADS Estácio + Copiloto IA", status: "pending" },
       { id: "rf05", label: "RF-05: 4 Estados Visuais (Loading, Sucesso, Empty, Erro) + Zero Emojis", status: "pending" }
@@ -25,11 +25,29 @@ class PortfolioController {
   }
 
   init() {
+    this.updateDynamicCounters();
     this.renderSkillsMatrix();
     this.renderPipeline();
     this.renderProjects();
     this.renderTestChecklist();
     this.bindEvents();
+  }
+
+  updateDynamicCounters() {
+    const totalProjects = (this.data && Array.isArray(this.data.projects)) ? this.data.projects.length : 0;
+
+    // 1. Sidebar Badge Dinâmico (Vector Length)
+    const sidebarBadge = document.getElementById("sidebarProjectsCount") || document.querySelector(".sidebar-link-badge");
+    if (sidebarBadge) {
+      sidebarBadge.textContent = String(totalProjects);
+      sidebarBadge.setAttribute("aria-label", `${totalProjects} cases e projetos disponíveis`);
+    }
+
+    // 2. Botão de Filtro "Todos os Cases (N)"
+    const allFilterBtn = document.getElementById("filterAllCountBtn") || document.querySelector('.filter-btn[data-category="all"]');
+    if (allFilterBtn) {
+      allFilterBtn.textContent = `Todos os Cases (${totalProjects})`;
+    }
   }
 
   setUIState(state) {
@@ -513,22 +531,26 @@ class PortfolioController {
     const hasHero = Boolean(heroTitle && heroTitle.textContent.trim().length > 10);
     this.updateStepStatus("rf01", hasHero ? "passed" : "failed");
 
-    // Passo 2: Validar Matriz & 4 Cases (Sem Estácio)
+    // Passo 2: Validar Matriz & Cases Reais
     this.updateStepStatus("rf02", "running");
-    if (statusText) statusText.textContent = "Verificando 4 cases aprovados e ausência de projetos removidos...";
+    const expectedCount = (this.data && Array.isArray(this.data.projects)) ? this.data.projects.length : 0;
+    if (statusText) statusText.textContent = `Verificando ${expectedCount} cases aprovados...`;
     await wait(200);
     this.setUIState("success");
     const projectCards = document.querySelectorAll(".project-card");
-    const hasFourCases = projectCards.length === 4;
-    this.updateStepStatus("rf02", hasFourCases ? "passed" : "failed");
+    const hasValidCases = projectCards.length === expectedCount && expectedCount > 0;
+    this.updateStepStatus("rf02", hasValidCases ? "passed" : "failed");
 
-    // Passo 3: Validar Modal Deep-Dive (Rubinot)
+    // Passo 3: Validar Modal Deep-Dive Dinâmico
     this.updateStepStatus("rf03", "running");
-    if (statusText) statusText.textContent = "Inspecionando modal técnico do Rubinot Companion...";
+    const firstProject = this.data && this.data.projects && this.data.projects[0];
+    if (statusText) statusText.textContent = `Inspecionando modal técnico de ${firstProject ? firstProject.title : "projeto"}...`;
     await wait(200);
-    this.openProjectModal("rubinot-ai");
-    await wait(200);
-    this.closeProjectModal();
+    if (firstProject) {
+      this.openProjectModal(firstProject.id);
+      await wait(200);
+      this.closeProjectModal();
+    }
     this.updateStepStatus("rf03", "passed");
 
     // Passo 4: Validar Copiloto IA & Carreira
