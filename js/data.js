@@ -38,6 +38,7 @@ const PORTFOLIO_DATA = {
     email: "gustavo.hf.simoes@gmail.com",
     whatsappNumber: "5543996034632",
     whatsappDisplay: "+55 (43) 99603-4632",
+    linkedinUrl: "https://linkedin.com/in/ghfs",
     githubUrl: "https://github.com/gustavo-hf-simoes",
     resumeUrl: "curriculo.html",
     availability: "Disponível para contratação PJ ou CLT em regime Remoto, Híbrido ou Presencial (Londrina/PR)"
