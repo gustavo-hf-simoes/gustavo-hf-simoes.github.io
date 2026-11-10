@@ -32,7 +32,7 @@ const PORTFOLIO_DATA = {
   profile: {
     name: "Gustavo Simões",
     fullName: "Gustavo Henrique Ferreira Simões",
-    role: "Analista de IA & Desenvolvedor Full Stack",
+    role: "Engenheiro de Software Full Stack & IA Aplicada",
     headline: "Engenheiro Full Stack & Especialista em Automação e Inteligência Artificial",
     location: "Londrina, Paraná, Brasil",
     email: "gustavo.hf.simoes@gmail.com",
@@ -165,35 +165,6 @@ const PORTFOLIO_DATA = {
         "Motor de cálculo financeiro/jurídico preciso para teses de Revisão de Contrato Veicular e acompanhamento de publicações DJEN."
       ],
       lessons: "Projetar ferramentas MCP com schemas JSON estritos e responsabilidades atômicas (listar conversas, gerar PDF, alimentar pasta) garante zero alucinação no manuseio de dados sensíveis de clientes."
-    },
-    {
-      id: "rubinot-ai",
-      title: "Rubinot Companion — Motor de Telemetria, Derivação Matemática Cúbica & Analytics",
-      category: "telemetry-data",
-      categoryLabel: "Telemetria & Engenharia de Dados",
-      featured: true,
-      shortDescription: "Plataforma local-first em Python e Chart.js para ingestão determinística de 4 fontes de telemetria JSON, derivação matemática de curva cúbica de XP, separação algorítmica de cura (Sio Split) e notificação Discord.",
-      metrics: [
-        { value: "4 Fontes", label: "Ingestão JSON Determinística" },
-        { value: "+22 Cols", label: "Schema CSV/JSON Retrocompatível" },
-        { value: "4-Tier", label: "Suíte de Testes E2E Caixa-Opaca" }
-      ],
-      tags: ["Python 3", "Modelagem Matemática Cúbica", "ThreadingHTTPServer", "Chart.js SPA", "Discord Webhooks", "Testes E2E 4-Tier"],
-      problem: "Logs de sessão do cliente Tibia/Rubinot eram gerados em 4 arquivos JSON fragmentados (`partyhistory.json`, `impactanalyser.json`, `itemtracking.json` e `itemprices.json`) com formatações numéricas inconsistentes e sem cruzamento analítico de eficiência de combate, cura dedicada ao grupo ou projeção matemática de progressão.",
-      architecture: "Pipeline analítico 100% determinístico em Python (`rubinot_Queries.py` + `server.py` sobre `ThreadingHTTPServer`) que normaliza os 4 JSONs brutos, aplica a equação polinomial cúbica oficial $XP(L) = \\frac{50}{3}(L^3 - 6L^2 + 17L - 12)$ para derivar Raw/Net XP/h e estimativa exata até o Level 720, calcula DPS/Peak Hit, realiza o Sio Split (isolando cura em aliados `Friend Sio` de auto-cura `Self-Healing`), precifica loot/supplies e serve um dashboard SPA em Chart.js com envio de resumo rico em 2 embeds (`< 1.500 chars`) para Discord.",
-      architectureMermaid: `graph LR
-        J1[partyhistory + impactanalyser] --> PY[Motor Python & Parser Determinístico]
-        J2[itemtracking + itemprices] --> PY
-        PY --> MATH[Derivação Cúbica XP & Sio Split]
-        MATH --> EXP[CSV +22 Cols & JSON Aninhado]
-        MATH --> SPA[SPA Chart.js & Discord 2-Embed]`,
-      results: [
-        "Derivação matemática exata de XP/h (Raw e Net), Level Estimation e projeção de horas restantes para a meta de Level 720.",
-        "Algoritmo exclusivo de Sio Split que separa com precisão a cura dedicada ao grupo (`Heal Friend`) da auto-cura, além de métricas de DPS, HPS, Peak Hit e Peak Cast.",
-        "Exportação retrocompatível adicionando +22 colunas analíticas ao CSV histórico e estrutura JSON aninhada (`combat`, `healing`, `xp`, `loot_valuation`, `supplies_used`).",
-        "Validação de qualidade com suíte automatizada E2E Caixa-Opaca em 4 camadas (Consistência Matemática, Invariantes de Negócio, Contratos HTTP/API e Paridade Visual DOM)."
-      ],
-      lessons: "Separar a camada de parsing/matemática pura da camada de apresentação e cobri-la com invariantes matemáticas automatizadas permite evoluir o schema analítico (+22 variáveis) com zero regressão nos dados históricos."
     },
     {
       id: "calc-coffee",

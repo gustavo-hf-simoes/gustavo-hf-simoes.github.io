@@ -147,11 +147,10 @@ async function runTestSuite() {
     assert.strictEqual(typeof PORTFOLIO_DATA, "object");
   });
 
-  it("Deve conter exatamente os 4 cases reais em produção (sem Estácio SAVA)", () => {
+  it("Deve conter exatamente os 3 cases reais em produção (sem Estácio SAVA)", () => {
     const ids = PORTFOLIO_DATA.projects.map((p) => p.id);
-    assert.strictEqual(ids.length, 4);
+    assert.strictEqual(ids.length, 3);
     assert.ok(ids.includes("djen-mcp"));
-    assert.ok(ids.includes("rubinot-ai"));
     assert.ok(ids.includes("calc-coffee"));
     assert.ok(ids.includes("sdd-factory"));
     assert.strictEqual(ids.includes("estacio-sava"), false);
@@ -176,13 +175,12 @@ async function runTestSuite() {
   console.log("\n4. Validação Funcional do PortfolioEngine (js/engine.js):");
   const PortfolioEngine = require(path.join(ROOT_DIR, "js/engine.js"));
 
-  it("Deve filtrar os 4 projetos com categoria 'all'", () => {
+  it("Deve filtrar os 3 projetos com categoria 'all'", () => {
     const all = PortfolioEngine.filterProjects(PORTFOLIO_DATA.projects, "all");
-    assert.strictEqual(all.length, 4);
+    assert.strictEqual(all.length, 3);
   });
 
   it("Deve filtrar por categoria específica", () => {
-    assert.strictEqual(PortfolioEngine.filterProjects(PORTFOLIO_DATA.projects, "telemetry-data").length, 1);
     assert.strictEqual(PortfolioEngine.filterProjects(PORTFOLIO_DATA.projects, "ai-agents").length, 2);
     assert.strictEqual(PortfolioEngine.filterProjects(PORTFOLIO_DATA.projects, "fullstack-pwa").length, 1);
   });
@@ -192,14 +190,14 @@ async function runTestSuite() {
   });
 
   it("Deve buscar projetos por texto livre (case-insensitive)", () => {
-    const res = PortfolioEngine.filterProjects(PORTFOLIO_DATA.projects, "all", "cúbica");
+    const res = PortfolioEngine.filterProjects(PORTFOLIO_DATA.projects, "all", "coffee");
     assert.strictEqual(res.length, 1);
-    assert.strictEqual(res[0].id, "rubinot-ai");
+    assert.strictEqual(res[0].id, "calc-coffee");
   });
 
-  it("Deve formatar corretamente a equação cúbica de progressão do Rubinot", () => {
-    const rubinot = PORTFOLIO_DATA.projects.find((p) => p.id === "rubinot-ai");
-    const formatted = PortfolioEngine.formatFormulaText(rubinot.architecture);
+  it("Deve formatar corretamente equações matemáticas em texto", () => {
+    const sampleText = "Fórmula: $XP(L) = \\frac{50}{3}(L^3 - 6L^2 + 17L - 12)$ aplicada.";
+    const formatted = PortfolioEngine.formatFormulaText(sampleText);
     assert.ok(formatted.includes('<code class="math-formula">XP(L) = (50 / 3) × (L³ - 6L² + 17L - 12)</code>'));
   });
 

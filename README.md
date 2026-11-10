@@ -53,21 +53,19 @@ portfolio-profissional-analista-de-ia/
 
 ---
 
-## 3. Os 4 Cases Reais em Produção
+## 3. Os 3 Projetos em Destaque
 
-1. **DJEN LegalTech & WhatsApp Jurídico MCP:**
-   - Servidor MCP de 8 ferramentas integrando n8n e WhatsApp Business.
-   - Geração automática de Kit de Procuração em PDF e triagem com -90% no tempo de atendimento.
-2. **Rubinot Companion & Telemetry Analytics:**
-   - Ingestão determinística de 4 fontes JSON em Python 3.
-   - Derivação da equação polinomial cúbica de progressão de XP:
-     $$\ XP(L) = \frac{50}{3}(L^3 - 6L^2 + 17L - 12) \$$
-   - Algoritmo exclusivo Sio Split e testes automatizados E2E Caixa-Opaca em 4 camadas.
-3. **Calc Coffee (CoffeeApp) PWA:**
-   - PWA Offline-First construído sob normas da Specialty Coffee Association (SCA/BSCA).
-   - Motor matemático reativo de extração, diagnóstico sensorial na Roda de Sabores e síntese de voz.
-4. **Orquestração Multi-Agente SDD (Antigravity Autopilot):**
-   - Esteira AI-First com 4 etapas, 2 checkpoints humanos de aprovação e roteamento inteligente com até 85% de economia de tokens via OmniRoute.
+1. **Calc Coffee (CoffeeApp) PWA:**
+   - Progressive Web App offline-first desenvolvido sob as normas internacionais da Specialty Coffee Association (SCA).
+   - Motor matemático reativo de extração, diagnóstico sensorial na Roda de Sabores e persistência local.
+
+2. **DJEN LegalTech — Automação de Processos Jurídicos:**
+   - Solução desenvolvida para escritório de advocacia para automação de triagem de clientes via WhatsApp.
+   - Integração com diários oficiais (DJEN), organização automática de documentos e geração de kits de procuração em PDF prontos para assinatura digital.
+
+3. **Esteira de Engenharia com Agentes de IA (Spec-Driven Development):**
+   - Pipeline de desenvolvimento em 5 etapas (Produto, Arquitetura, Desenvolvimento, Segurança e QA) com checkpoints de aprovação humana.
+   - Otimização de contexto e redução de até 85% no consumo de tokens com roteamento inteligente de modelos.
 
 ---
 
@@ -93,28 +91,5 @@ npm test
 
 ---
 
-## 5. API de Chat (/api/portfolio/chat)
-
-- **Método:** `POST`
-- **Payload:**
-```json
-{
-  "message": "Quais são as principais competências do Gustavo em automação e IA?",
-  "history": []
-}
-```
-- **Resposta:**
-```json
-{
-  "success": true,
-  "reply": "Gustavo possui experiência comprovada...",
-  "model": "cascata-principal"
-}
-```
-*Em caso de indisponibilidade do OmniRoute local, o endpoint responde `{ "success": false, "fallback": true }`, orientando a UI a ativar seu motor offline determinístico.*
-
----
-
-## 6. Licença e Autoria
-Desenvolvido por **Gustavo Henrique Ferreira Simões**. Todos os direitos reservados.
-Governança por **Antigravity Autopilot & Spec-Driven Development (SDD)**.
+## 5. Licença & Autor
+Desenvolvido por **Gustavo Henrique Ferreira Simões** sob licença MIT.
