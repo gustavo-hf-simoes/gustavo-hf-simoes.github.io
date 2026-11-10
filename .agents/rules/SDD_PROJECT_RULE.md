@@ -11,3 +11,7 @@ Este repositório é governado pela esteira **Spec-Driven Development AI-First**
 3. **Auditoria Contínua & Retroalimentação**:
    - Todo desenvolvimento deve ser validado contra a SPEC (`sdd-qa-auditor`).
    - Sempre que o usuário corrigir uma implementação ou requisito, grave o aprendizado em `.sdd/memory/lessons_learned.md`.
+4. **Catálogo de Projetos Dinâmico & Zero Hardcoding de Contadores**:
+   - `PORTFOLIO_DATA.projects` (em `js/data.js`) é a ÚNICA fonte da verdade para o catálogo de cases.
+   - **PROIBIDO CHUMBAR NÚMEROS DE PROJETOS NO HTML OU SCRIPTS**: O badge da sidebar (`.sidebar-link-badge`), as abas de filtro (`Todos os Cases (N)`) e os scripts de teste/auditoria DEVEM calcular dinamicamente via `data.projects.length` (vetor).
+   - Inserir ou remover qualquer projeto do vetor deve refletir instantaneamente em toda a aplicação sem exigir alteração manual de marcações estáticas no `index.html`.
